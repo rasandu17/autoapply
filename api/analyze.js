@@ -51,25 +51,56 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Check required env vars
+  if (!process.env.GEMINI_API_KEY) {
+    console.error('❌ GEMINI_API_KEY not set!');
+    return res.status(500).json({ 
+      error: 'Server configuration error', 
+      details: 'GEMINI_API_KEY not configured' 
+    });
+  }
+
+  console.log('✅ Environment variables loaded');
+  console.log('🔑 GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? 'Set' : 'Missing');
+
   try {
     let jobText = '';
     let imageBuffer = null;
 
-    // Parse multipart form data
-    const { fields, files } = await parseMultipartForm(req);
-    
-    if (fields.jobText && fields.jobText[0]) {
-      jobText = fields.jobText[0];
-    }
+    console.log('📥 Received request, method:', req.method);
+    console.log('📦 Content-Type:', req.headers['content-type']);
 
-    if (files.image && files.image[0]) {
-      imageBuffer = await readFileBuffer(files.image[0]);
+    // Parse multipart form data
+    try {
+      const { fields, files } = await parseMultipartForm(req);
+      console.log('✅ Form parsed successfully');
+      console.log('📋 Fields:', Object.keys(fields));
+      console.log('📎 Files:', Object.keys(files));
+      
+      if (fields.jobText && fields.jobText[0]) {
+        jobText = fields.jobText[0];
+        console.log('📝 Job text length:', jobText.length);
+      }
+
+      if (files.image && files.image[0]) {
+        imageBuffer = await readFileBuffer(files.image[0]);
+        console.log('🖼️ Image buffer size:', imageBuffer.length);
+      }
+    } catch (parseError) {
+      console.error('❌ Form parsing error:', parseError);
+      throw parseError;
     }
 
     // Step 1: If image provided, extract text using OCR
     if (imageBuffer && !jobText) {
       console.log('📸 Extracting text from image using OCR...');
-      jobText = await ocrService.extractTextFromImage(imageBuffer);
+      try {
+        jobText = await ocrService.extractTextFromImage(imageBuffer);
+        console.log('✅ OCR complete, extracted text length:', jobText.length);
+      } catch (ocrError) {
+        console.error('❌ OCR error:', ocrError);
+        throw new Error(`OCR failed: ${ocrError.message}`);
+      }
     }
 
     if (!jobText) {
@@ -81,19 +112,22 @@ export default async function handler(req, res) {
     // Wrap AI processing with timeout (55s to leave buffer for Vercel's 60s limit)
     const result = await withTimeout((async () => {
       // Step 2: Analyze job vs CV
-      console.log('Analyzing job compatibility...');
+      console.log('🤖 Step 2: Analyzing job compatibility...');
       const analysis = await geminiService.analyzeJobVsCV(jobText);
+      console.log('✅ Analysis complete');
 
       // Step 3: Extract company email and job title
-      console.log('Extracting job details...');
+      console.log('🤖 Step 3: Extracting job details...');
       const [companyEmail, jobTitle] = await Promise.all([
         geminiService.extractCompanyEmail(jobText),
         geminiService.extractJobTitle(jobText)
       ]);
+      console.log('✅ Job details extracted');
 
       // Step 4: Generate professional email
-      console.log('Generating email...');
+      console.log('🤖 Step 4: Generating email...');
       const email = await geminiService.generateEmail(jobText);
+      console.log('✅ Email generated');
 
       return {
         jobText,
@@ -105,11 +139,12 @@ export default async function handler(req, res) {
       };
     })());
 
+    console.log('✅ All processing complete, sending response');
     // Return complete response
     res.status(200).json(result);
 
   } catch (error) {
-    console.error('Error in /api/analyze:', error.message);
+    console.error('❌ Error in /api/analyze:', error.message);
     console.error('Error stack:', error.stack);
     console.error('Full error:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
     
