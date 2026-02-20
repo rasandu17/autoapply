@@ -110,9 +110,13 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Error in /api/analyze:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Full error:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    
     res.status(500).json({ 
       error: 'Failed to process job post', 
-      details: error.message 
+      details: error.message,
+      errorType: error.constructor.name
     });
   }
 }

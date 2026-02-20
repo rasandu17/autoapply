@@ -44,7 +44,10 @@ async function loadCV() {
     path.join(__dirname, 'cv.txt')
   ];
   
+  console.log('Looking for CV in:', __dirname);
+  
   for (const cvPath of cvPaths) {
+    console.log('Checking:', cvPath);
     if (fs.existsSync(cvPath)) {
       if (cvPath.endsWith('.pdf')) {
         // Read and parse PDF
@@ -60,7 +63,9 @@ async function loadCV() {
     }
   }
   
-  throw new Error('CV file not found! Please add cv.pdf or cv.txt in backend folder');
+  console.error('❌ CV file not found! Checked paths:', cvPaths);
+  console.error('Directory contents:', fs.readdirSync(__dirname));
+  throw new Error('CV file not found! Please ensure Ravindu_Sandumith_CV.pdf is in the backend folder and committed to git.');
 }
 
 /**

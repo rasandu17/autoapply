@@ -8,9 +8,10 @@ yarn-error.log*
 .env
 .env.local
 
-# CV files (personal data)
+# CV files (personal data - keep specific CV for deployment)
 backend/cv.pdf
 backend/cv.txt
+# Note: Ravindu_Sandumith_CV.pdf is NOT ignored - it gets deployed
 
 # Build outputs
 dist/
