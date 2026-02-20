@@ -137,6 +137,20 @@ function App() {
       else             formData.append('jobText', currentText);
 
       const res = await fetch(`${API_URL}/analyze`, { method: 'POST', body: formData });
+      
+      // Check if response is OK and contains JSON
+      if (!res.ok) {
+        const text = await res.text();
+        let errorMsg = 'Failed to analyze job';
+        try {
+          const data = JSON.parse(text);
+          errorMsg = data.error || data.details || errorMsg;
+        } catch {
+          errorMsg = text || errorMsg;
+        }
+        throw new Error(errorMsg);
+      }
+      
       const data = await res.json();
 
       if (data.error) throw new Error(data.error);
