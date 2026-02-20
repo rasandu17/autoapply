@@ -1,0 +1,14 @@
+{
+  "name": "autoapply-api",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.5",
+    "multiparty": "^4.2.3",
+    "nodemailer": "^6.9.13",
+    "openai": "^6.22.0",
+    "pdf-parse": "^1.1.1",
+    "tesseract.js": "^7.0.0"
+  }
+}

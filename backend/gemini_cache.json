@@ -1,0 +1,51 @@
+{
+  "analysis_894fba4cda9b1cf8cd0e2bcfa491804d": {
+    "compatibility": 85,
+    "matchingSkills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Git",
+      "REST APIs (understanding)",
+      "TypeScript",
+      "Personal/Academic Projects",
+      "Problem-solving mindset",
+      "Willingness to learn"
+    ],
+    "missingSkills": [
+      "PostgreSQL",
+      "Docker",
+      "AWS",
+      "GCP"
+    ],
+    "eligibility": "Eligible"
+  },
+  "email_894fba4cda9b1cf8cd0e2bcfa491804d": "rasandu17@gmail.com",
+  "title_894fba4cda9b1cf8cd0e2bcfa491804d": "Full Stack Developer Intern",
+  "analysis_5f3fed84dc6cc6954d23e9770088b269": {
+    "compatibility": 90,
+    "matchingSkills": [
+      "React",
+      "Node.js",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "MongoDB",
+      "RESTful APIs",
+      "Git",
+      "Clean, scalable code",
+      "Problem-solving skills",
+      "UI/UX (Figma)"
+    ],
+    "missingSkills": [
+      "PostgreSQL"
+    ],
+    "eligibility": "Eligible"
+  },
+  "email_5f3fed84dc6cc6954d23e9770088b269": "rasandu17@gmail.com",
+  "title_5f3fed84dc6cc6954d23e9770088b269": "Full Stack Developer Intern"
+}

@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Design Tokens (Gemini-inspired) ─────────────────────────── */
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Palette */
+  --bg-app: #FFFFFF;
+  --bg-sidebar: #F0F4F9;
+  --bg-input: #F0F4F9;
+  --bg-user-msg: #F0F4F9;
+  --bg-ai-msg: transparent;
+
+  --text-primary: #1E1F20;
+  --text-secondary: #444746;
+  --text-placeholder: #8E918F;
+
+  --color-accent: #0b57d0;
+  /* Google Blue */
+  --color-border: #E3E3E3;
+
+  /* Dimensions */
+  --sidebar-width: 260px;
+  --input-max-width: 800px;
+  --radius-pill: 999px;
+  --radius-bubble: 18px;
+}
+
+/* ── Reset ───────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  background-color: var(--bg-app);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  /* App handles scrolling */
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* ── Root ────────────────────────────────────────────────────── */
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Custom Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
