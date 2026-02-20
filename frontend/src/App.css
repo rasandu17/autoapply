@@ -434,6 +434,29 @@
   border-color: #F8D0CD;
 }
 
+.email-meta {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.email-meta strong {
+  color: var(--text-primary);
+  margin-right: 8px;
+}
+
+.email-body {
+  background: #F8F9FA;
+  border: 1px solid #E3E3E3;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text-primary);
+}
+
 .error-box {
   display: flex;
   align-items: center;

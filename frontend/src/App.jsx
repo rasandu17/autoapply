@@ -77,8 +77,25 @@ const AIMessage = ({ result, loading, error }) => (
               ))}
             </div>
           </div>
-          
-          {/* Email Draft Section would go here in a refined UI, maybe as an accordion or separate block */}
+
+          {result.email && (
+            <div className="result-section">
+              <h4>📧 Generated Email</h4>
+              {result.jobTitle && (
+                <div className="email-meta">
+                  <strong>Subject:</strong> Application for {result.jobTitle}
+                </div>
+              )}
+              {result.companyEmail && (
+                <div className="email-meta">
+                  <strong>To:</strong> {result.companyEmail}
+                </div>
+              )}
+              <div className="email-body">
+                {result.email}
+              </div>
+            </div>
+          )}
         </div>
       ) : null}
     </div>
