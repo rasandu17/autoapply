@@ -38,7 +38,7 @@ async function extractTextFromImage(imageBuffer) {
       
       // Use Mistral's Pixtral vision model
       const result = await mistral.chat.complete({
-        model: 'pixtral-12b-2409',
+        model: 'pixtral-12b-latest',
         messages: [
           {
             role: 'user',
@@ -49,7 +49,9 @@ async function extractTextFromImage(imageBuffer) {
               },
               {
                 type: 'image_url',
-                imageUrl: imageUrl
+                image_url: {
+                  url: imageUrl
+                }
               }
             ]
           }
@@ -65,6 +67,12 @@ async function extractTextFromImage(imageBuffer) {
       
     } catch (error) {
       console.error('⚠️ Mistral Vision Error:', error.message);
+      if (error.response) {
+        console.error('Mistral API Response:', error.response.data || error.response);
+      }
+      if (error.statusCode) {
+        console.error('Mistral Status Code:', error.statusCode);
+      }
       console.log('🔄 Falling back to Gemini Vision...');
     }
   }
