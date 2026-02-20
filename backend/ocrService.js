@@ -15,7 +15,8 @@ async function extractTextFromImage(imageBuffer) {
   try {
     console.log('🔍 Starting Gemini Vision text extraction...');
     
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+    // Try gemini-pro-vision (classic vision model)
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' });
     
     // Convert buffer to base64
     const base64Image = imageBuffer.toString('base64');
