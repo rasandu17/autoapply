@@ -3,29 +3,21 @@ import {
   Send, 
   Paperclip, 
   Sparkles, 
-  User, 
-  Menu, 
-  Plus, 
-  MessageSquare, 
-  Box, 
   CheckCircle2, 
   AlertCircle,
   Mail,
-  Loader2
+  Loader2,
+  Briefcase,
+  ChevronRight
 } from 'lucide-react';
 import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
-/* ─────────────────────────────────────────────────────────────
-   Chat Components
-   ───────────────────────────────────────────────────────────── */
+/*  Components  */
 
 const UserMessage = ({ content, image }) => (
   <div className="message message--user">
-    <div className="message-avatar">
-      <User size={20} color="#444746" />
-    </div>
     <div className="message-content">
       {image && (
         <div className="message-image-preview">
@@ -40,7 +32,7 @@ const UserMessage = ({ content, image }) => (
 const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail }) => (
   <div className="message message--ai">
     <div className="message-avatar message-avatar--ai">
-      <Sparkles size={18} color="white" />
+      <Sparkles size={18} color='#007AFF' />
     </div>
     <div className="message-content">
       {loading ? (
@@ -82,17 +74,7 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail }) => (
 
           {result.email && (
             <div className="result-section">
-              <h4>📧 Generated Email</h4>
-              {result.jobTitle && (
-                <div className="email-meta">
-                  <strong>Subject:</strong> Application for {result.jobTitle}
-                </div>
-              )}
-              {result.companyEmail && (
-                <div className="email-meta">
-                  <strong>To:</strong> {result.companyEmail}
-                </div>
-              )}
+              <h4>Generated Application Email</h4>
               <div className="email-body">
                 {result.email}
               </div>
@@ -105,7 +87,7 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail }) => (
                   {sendingEmail ? (
                     <><Loader2 size={16} className="spinner" /> Sending...</>
                   ) : (
-                    <><Mail size={16} /> Send Email</>
+                    <><Mail size={16} /> Send Application to {result.companyEmail}</>
                   )}
                 </button>
               )}
@@ -117,28 +99,22 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail }) => (
   </div>
 );
 
-/* ─────────────────────────────────────────────────────────────
-   Main App Component
-   ───────────────────────────────────────────────────────────── */
+/*  Main App Component  */
 function App() {
-  // State
   const [inputObj, setInputObj] = useState({ text: '', file: null });
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sendingEmail, setSendingEmail] = useState(false);
   
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [chatHistory, loading]);
 
-  /* ── Handlers ── */
   const handleFileSelect = (e) => {
     if (e.target.files[0]) {
       setInputObj({ ...inputObj, file: e.target.files[0] });
@@ -148,18 +124,15 @@ function App() {
   const handleSend = async () => {
     if (!inputObj.text.trim() && !inputObj.file) return;
 
-    // 1. Add User Message
     const userMsg = { 
       role: 'user', 
       content: inputObj.text, 
       image: inputObj.file 
     };
     
-    // 2. Add Temporary Loading AI Message
     setChatHistory(prev => [...prev, userMsg]);
     setLoading(true);
     
-    // Clear Input
     const currentFile = inputObj.file;
     const currentText = inputObj.text;
     setInputObj({ text: '', file: null });
@@ -171,35 +144,18 @@ function App() {
 
       const res = await fetch(`${API_URL}/analyze`, { method: 'POST', body: formData });
       
-      // Check if response is OK and contains JSON
       if (!res.ok) {
         const text = await res.text();
-        let errorMsg = 'Failed to analyze job';
-        try {
-          const data = JSON.parse(text);
-          errorMsg = data.error || data.details || errorMsg;
-        } catch {
-          errorMsg = text || errorMsg;
-        }
-        throw new Error(errorMsg);
+        throw new Error(text || 'Failed to analyze job');
       }
       
       const data = await res.json();
-
       if (data.error) throw new Error(data.error);
 
-      // 3. Add AI Success Message
-      setChatHistory(prev => [
-        ...prev, 
-        { role: 'ai', result: data }
-      ]);
+      setChatHistory(prev => [...prev, { role: 'ai', result: data }]);
 
     } catch (err) {
-      // Add Error Message
-      setChatHistory(prev => [
-        ...prev, 
-        { role: 'ai', error: err.message }
-      ]);
+      setChatHistory(prev => [...prev, { role: 'ai', error: err.message }]);
     } finally {
       setLoading(false);
     }
@@ -213,11 +169,7 @@ function App() {
   };
 
   const handleSendEmail = async (result) => {
-    if (!result.companyEmail || !result.email || !result.jobTitle) {
-      alert('Missing email information');
-      return;
-    }
-
+    if (!result.companyEmail) return;
     setSendingEmail(true);
     try {
       const res = await fetch(`${API_URL}/send-email`, {
@@ -229,107 +181,58 @@ function App() {
           body: result.email
         })
       });
-
-      if (!res.ok) {
-        const text = await res.text();
-        let errorMsg = 'Failed to send email';
-        try {
-          const data = JSON.parse(text);
-          errorMsg = data.error || data.details || errorMsg;
-        } catch {
-          errorMsg = text || errorMsg;
-        }
-        throw new Error(errorMsg);
-      }
-
-      const data = await res.json();
-      alert('✅ Email sent successfully!');
+      if (!res.ok) throw new Error('Failed to send');
+      alert('Email sent successfully!');
     } catch (err) {
-      alert(`❌ Failed to send email: ${err.message}`);
+      alert(`Failed to send email: ${err.message}`);
     } finally {
       setSendingEmail(false);
     }
   };
 
-  /* ── Render ── */
   return (
     <div className="app-container">
       
-      {/* ── Sidebar ── */}
-      <aside className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
-        <div className="sidebar-header">
-          <div className="menu-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <Menu size={24} color="#444746" />
-          </div>
-          {sidebarOpen && <span className="logo-text">AutoApply</span>}
-        </div>
-        
-        {sidebarOpen && (
-          <div className="new-chat-btn" onClick={() => setChatHistory([])}>
-             <Plus size={20} />
-             <span>New analysis</span>
-          </div>
-        )}
-
-        <div className="recent-list">
-          {sidebarOpen && <p className="section-title">Recent</p>}
-          {/* Mock History Items */}
-          {sidebarOpen && (
-            <>
-              <div className="history-item"><MessageSquare size={16}/> Frontend Dev Job...</div>
-              <div className="history-item"><MessageSquare size={16}/> Backend Engineer...</div>
-            </>
-          )}
-        </div>
-        
-        <div className="sidebar-footer">
-            <div className={`user-pill ${!sidebarOpen && 'collapsed'}`}>
-                <div className="user-avatar-small">R</div>
-                {sidebarOpen && <div className="user-info">
-                    <span className="name">Ravindu</span>
-                    <span className="plan">Pro Plan</span>
-                </div>}
-            </div>
-        </div>
-      </aside>
-
-      {/* ── Main Chat Area ── */}
+      {/*  Main Chat Area  */}
       <main className="main-content">
         
-        {/* Top Mobile/Header */}
-        {!sidebarOpen && (
-           <div className="mobile-header">
-              <div className="menu-btn" onClick={() => setSidebarOpen(true)}>
-                <Menu size={24} color="#444746" />
-              </div>
-              <span className="logo-text">AutoApply AI</span>
-           </div>
-        )}
+        {/* Header - Simple Brand */}
+        <div className="app-header">
+           <span className="logo-text">AutoApply</span>
+        </div>
 
         {/* Scrollable Feed */}
         <div className="chat-feed" ref={scrollRef}>
           {chatHistory.length === 0 ? (
-            /* Empty State / Welcome */
             <div className="welcome-screen">
-               <div className="logo-large">
-                  <Sparkles size={42} color="#0b57d0" strokeWidth={1.5} />
+               <div style={{marginBottom: 20}}>
+                  <div style={{
+                      width: 80, height: 80, 
+                      borderRadius: 24, 
+                      background: 'linear-gradient(135deg, #007AFF, #5AC8FA)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 10px 30px rgba(0,122,255,0.3)'
+                  }}>
+                      <Sparkles size={40} color="white" />
+                  </div>
                </div>
                <h1>Hello, Ravindu</h1>
-               <p className="subtitle">How can I help analyze your next job opportunity?</p>
+               <p className="subtitle">Ready to find your next opportunity?</p>
                
                <div className="suggestions">
-                  <div className="suggestion-card">
-                    <Box size={20} className="suggestion-icon"/>
-                    <p>Analyze compatibility for a <b>Frontend Engineer</b> role</p>
+                  <div className="suggestion-card" onClick={() => setInputObj({...inputObj, text: "Analyze this text for a Senior React Developer role..."})}>
+                    <Briefcase size={24} className="suggestion-icon"/>
+                    <p>Analyze React Developer role</p>
+                    <ChevronRight size={16} color="#C7C7CC" style={{marginTop:'auto'}}/>
                   </div>
-                  <div className="suggestion-card">
-                    <Paperclip size={20} className="suggestion-icon"/>
-                    <p>Upload a screenshot of a <b>LinkedIn Job Post</b></p>
+                  <div className="suggestion-card" onClick={() => fileInputRef.current?.click()}>
+                    <Paperclip size={24} className="suggestion-icon"/>
+                    <p>Analyze from Screenshot</p>
+                    <ChevronRight size={16} color="#C7C7CC" style={{marginTop:'auto'}}/>
                   </div>
                </div>
             </div>
           ) : (
-            /* Message List */
             <div className="message-list">
                {chatHistory.map((msg, i) => (
                  msg.role === 'user' 
@@ -347,13 +250,16 @@ function App() {
           )}
         </div>
 
-        {/* Input Area */}
-        <div className="input-area-wrapper">
+        {/* Input Area (Fixed Bottom) */}
+        <div className="input-area">
            <div className="input-container">
-              <div className="icon-btn" onClick={() => fileInputRef.current?.click()}>
-                 <Paperclip size={22} color="#444746" />
-                 {inputObj.file && <span className="file-badge">1</span>}
-              </div>
+              <button className="icon-btn" onClick={() => fileInputRef.current?.click()}>
+                 <Paperclip size={20} />
+                 {inputObj.file && <div style={{
+                     position:'absolute', top:8, right:8, width:8, height:8, 
+                     borderRadius:'50%', background:'red'
+                 }}/>}
+              </button>
               <input 
                  type="file" 
                  ref={fileInputRef} 
@@ -363,20 +269,18 @@ function App() {
               />
               
               <textarea 
-                placeholder={inputObj.file ? "Image attached. Add context..." : "Paste job description or upload image..."}
+                className="text-input"
+                placeholder="Ask anything..."
                 value={inputObj.text}
                 onChange={(e) => setInputObj({...inputObj, text: e.target.value})}
                 onKeyDown={handleKeyPress}
                 rows={1}
               />
               
-              <div className={`icon-btn send-btn ${(!inputObj.text && !inputObj.file) ? 'disabled' : ''}`} onClick={handleSend}>
-                 <Send size={20} color={(!inputObj.text && !inputObj.file) ? "#e3e3e3" : "white"} />
-              </div>
+              <button className="send-btn" onClick={handleSend} disabled={!inputObj.text && !inputObj.file}>
+                 <Send size={20} />
+              </button>
            </div>
-           <p className="disclaimer">
-             AutoApply can make mistakes. Please review generated emails.
-           </p>
         </div>
 
       </main>

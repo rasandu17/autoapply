@@ -1,38 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
-/* ── Design Tokens (Gemini-inspired) ─────────────────────────── */
+/*  iOS Design Tokens  */
 :root {
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* System Fonts */
+  --font-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  /* Palette */
-  --bg-app: #FFFFFF;
-  --bg-sidebar: #F0F4F9;
-  --bg-input: #F0F4F9;
-  --bg-user-msg: #F0F4F9;
-  --bg-ai-msg: transparent;
+  /* iOS 15+ Inspired Palette */
+  --bg-app: #F2F2F7; /* System Gray 6 */
+  --bg-sidebar: rgba(255, 255, 255, 0.72);
+  --bg-card: #FFFFFF;
+  --bg-input: rgba(255, 255, 255, 0.85);
+  
+  /* Message Bubbles */
+  --msg-user-bg: #007AFF; /* iOS Blue */
+  --msg-user-text: #FFFFFF;
+  --msg-ai-bg: #E5E5EA; /* System Gray 5 */
+  --msg-ai-text: #000000;
 
-  --text-primary: #1E1F20;
-  --text-secondary: #444746;
-  --text-placeholder: #8E918F;
+  /* Text Colors */
+  --text-primary: #000000;
+  --text-secondary: #8E8E93;
+  --text-tertiary: #C7C7CC;
+  
+  /* Accents */
+  --color-accent: #007AFF;
+  --color-success: #34C759;
+  --color-danger: #FF3B30;
+  --color-warning: #FF9500;
+  
+  /* Borders & Shadows */
+  --border-light: rgba(60, 60, 67, 0.12); /* Separator Color */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
 
-  --color-accent: #0b57d0;
-  /* Google Blue */
-  --color-border: #E3E3E3;
-
-  /* Dimensions */
-  --sidebar-width: 260px;
-  --input-max-width: 800px;
-  --radius-pill: 999px;
-  --radius-bubble: 18px;
+  /* Dimensions & Radius */
+  --sidebar-width: 280px;
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  
+  /* Effects */
+  --blur-md: blur(20px);
+  --blur-lg: blur(40px);
 }
 
-/* ── Reset ───────────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
+/*  Reset  */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -41,51 +61,29 @@ body {
   background-color: var(--bg-app);
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
-  /* App handles scrolling */
+  overflow: hidden; /* App handles scrolling */
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   height: 100%;
   width: 100%;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
-}
-
-/* ── Root ────────────────────────────────────────────────────── */
-#root {
-  width: 100%;
   display: flex;
-  justify-content: center;
 }
 
-/* ── Custom Scrollbar ────────────────────────────────────────── */
+/*  Custom Scrollbar (Subtle)  */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 99px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.25);
 }
