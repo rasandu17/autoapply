@@ -9,7 +9,9 @@ import {
   MessageSquare, 
   Box, 
   CheckCircle2, 
-  AlertCircle 
+  AlertCircle,
+  Mail,
+  Loader2
 } from 'lucide-react';
 import './App.css';
 
@@ -35,7 +37,7 @@ const UserMessage = ({ content, image }) => (
   </div>
 );
 
-const AIMessage = ({ result, loading, error }) => (
+const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail }) => (
   <div className="message message--ai">
     <div className="message-avatar message-avatar--ai">
       <Sparkles size={18} color="white" />
@@ -94,6 +96,19 @@ const AIMessage = ({ result, loading, error }) => (
               <div className="email-body">
                 {result.email}
               </div>
+              {result.companyEmail && (
+                <button 
+                  className="send-email-btn"
+                  onClick={() => onSendEmail(result)}
+                  disabled={sendingEmail}
+                >
+                  {sendingEmail ? (
+                    <><Loader2 size={16} className="spinner" /> Sending...</>
+                  ) : (
+                    <><Mail size={16} /> Send Email</>
+                  )}
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -111,6 +126,7 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sendingEmail, setSendingEmail] = useState(false);
   
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
@@ -193,6 +209,45 @@ function App() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  const handleSendEmail = async (result) => {
+    if (!result.companyEmail || !result.email || !result.jobTitle) {
+      alert('Missing email information');
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const res = await fetch(`${API_URL}/send-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: result.companyEmail,
+          subject: `Application for ${result.jobTitle}`,
+          body: result.email
+        })
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        let errorMsg = 'Failed to send email';
+        try {
+          const data = JSON.parse(text);
+          errorMsg = data.error || data.details || errorMsg;
+        } catch {
+          errorMsg = text || errorMsg;
+        }
+        throw new Error(errorMsg);
+      }
+
+      const data = await res.json();
+      alert('✅ Email sent successfully!');
+    } catch (err) {
+      alert(`❌ Failed to send email: ${err.message}`);
+    } finally {
+      setSendingEmail(false);
     }
   };
 
@@ -279,7 +334,13 @@ function App() {
                {chatHistory.map((msg, i) => (
                  msg.role === 'user' 
                    ? <UserMessage key={i} content={msg.content} image={msg.image} />
-                   : <AIMessage key={i} result={msg.result} error={msg.error} />
+                   : <AIMessage 
+                       key={i} 
+                       result={msg.result} 
+                       error={msg.error}
+                       onSendEmail={handleSendEmail}
+                       sendingEmail={sendingEmail}
+                     />
                ))}
                {loading && <AIMessage loading={true} />}
             </div>
