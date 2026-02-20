@@ -15,7 +15,8 @@ const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 // Helper function to retry Gemini calls with exponential backoff
 
 // Helper function to retry Gemini calls with exponential backoff
-async function retryWithBackoff(fn, maxRetries = 3, baseDelay = 2000) {
+// Optimized for serverless with shorter delays
+async function retryWithBackoff(fn, maxRetries = 2, baseDelay = 1000) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();

@@ -3,6 +3,16 @@ const multiparty = require('multiparty');
 const geminiService = require('../backend/geminiService');
 const ocrService = require('../backend/ocrService');
 
+// Timeout wrapper for serverless functions
+function withTimeout(promise, timeoutMs = 55000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout - please try again')), timeoutMs)
+    )
+  ]);
+}
+
 // Helper to parse multipart form data
 function parseMultipartForm(req) {
   return new Promise((resolve, reject) => {
@@ -68,30 +78,35 @@ export default async function handler(req, res) {
       });
     }
 
-    // Step 2: Analyze job vs CV
-    console.log('Analyzing job compatibility...');
-    const analysis = await geminiService.analyzeJobVsCV(jobText);
+    // Wrap AI processing with timeout (55s to leave buffer for Vercel's 60s limit)
+    const result = await withTimeout((async () => {
+      // Step 2: Analyze job vs CV
+      console.log('Analyzing job compatibility...');
+      const analysis = await geminiService.analyzeJobVsCV(jobText);
 
-    // Step 3: Extract company email and job title
-    console.log('Extracting job details...');
-    const [companyEmail, jobTitle] = await Promise.all([
-      geminiService.extractCompanyEmail(jobText),
-      geminiService.extractJobTitle(jobText)
-    ]);
+      // Step 3: Extract company email and job title
+      console.log('Extracting job details...');
+      const [companyEmail, jobTitle] = await Promise.all([
+        geminiService.extractCompanyEmail(jobText),
+        geminiService.extractJobTitle(jobText)
+      ]);
 
-    // Step 4: Generate professional email
-    console.log('Generating email...');
-    const email = await geminiService.generateEmail(jobText);
+      // Step 4: Generate professional email
+      console.log('Generating email...');
+      const email = await geminiService.generateEmail(jobText);
+
+      return {
+        jobText,
+        analysis,
+        email,
+        companyEmail,
+        jobTitle,
+        success: true
+      };
+    })());
 
     // Return complete response
-    res.status(200).json({
-      jobText,
-      analysis,
-      email,
-      companyEmail,
-      jobTitle,
-      success: true
-    });
+    res.status(200).json(result);
 
   } catch (error) {
     console.error('Error in /api/analyze:', error.message);
