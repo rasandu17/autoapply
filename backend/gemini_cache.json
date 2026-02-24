@@ -1,51 +1,171 @@
 {
-  "analysis_894fba4cda9b1cf8cd0e2bcfa491804d": {
+  "analysis_d5a642e9598e44cfd844b419ac86b618": {
     "compatibility": 85,
     "matchingSkills": [
-      "HTML",
-      "CSS",
-      "JavaScript",
       "React",
       "Node.js",
+      "MongoDB",
+      "Tailwind CSS",
+      "Next.js",
+      "Figma",
+      "Kotlin",
+      "Python",
+      "Java",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "MySQL",
       "Express.js",
-      "MongoDB",
+      "Spring Boot",
+      ".NET",
       "Git",
-      "REST APIs (understanding)",
-      "TypeScript",
-      "Personal/Academic Projects",
-      "Problem-solving mindset",
-      "Willingness to learn"
+      "FastAPI",
+      "BeautifulSoup"
     ],
     "missingSkills": [
-      "PostgreSQL",
-      "Docker",
-      "AWS",
-      "GCP"
+      "Flutter",
+      "React Native",
+      "Authentication Systems"
     ],
     "eligibility": "Eligible"
   },
-  "email_894fba4cda9b1cf8cd0e2bcfa491804d": "rasandu17@gmail.com",
-  "title_894fba4cda9b1cf8cd0e2bcfa491804d": "Full Stack Developer Intern",
-  "analysis_5f3fed84dc6cc6954d23e9770088b269": {
-    "compatibility": 90,
-    "matchingSkills": [
-      "React",
-      "Node.js",
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "MongoDB",
-      "RESTful APIs",
-      "Git",
-      "Clean, scalable code",
-      "Problem-solving skills",
-      "UI/UX (Figma)"
-    ],
-    "missingSkills": [
-      "PostgreSQL"
-    ],
-    "eligibility": "Eligible"
-  },
-  "email_5f3fed84dc6cc6954d23e9770088b269": "rasandu17@gmail.com",
-  "title_5f3fed84dc6cc6954d23e9770088b269": "Full Stack Developer Intern"
+  "email_d5a642e9598e44cfd844b419ac86b618": "careers@technovasolutions.lk",
+  "positions_1e8568078b80cce8b2aec8b56d14ddb5": [
+    {
+      "title": "Intern Software Engineer (Full Stack)",
+      "description": "Work on real-world web applications using modern technologies like React, Node.js, and MongoDB"
+    },
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with APIs, databases, authentication systems, and server-side development"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Build responsive and user-friendly interfaces using React, Next.js, and Tailwind CSS"
+    },
+    {
+      "title": "Intern Mobile App Developer",
+      "description": "Develop cross-platform mobile applications using Flutter or React Native"
+    },
+    {
+      "title": "Intern UI/UX Designer",
+      "description": "Design clean, modern, and user-centered interfaces using Figma and industry best practices"
+    },
+    {
+      "title": "Intern Digital Marketing Executive",
+      "description": "Learn social media strategy, content creation, SEO basics, and campaign management"
+    },
+    {
+      "title": "Intern HR & Administration Executive",
+      "description": "Assist in recruitment, onboarding, and internal coordination processes"
+    }
+  ],
+  "email_1e8568078b80cce8b2aec8b56d14ddb5": "careers@technovasolutions.lk",
+  "positions_e035fe7d71d0e5e010d18ca4e3f764d9": [
+    {
+      "title": "Intern Software Engineer (Full Stack)",
+      "description": "Work on real-world web applications using modern technologies like React, Node.js, and MongoDB"
+    },
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with APIs, databases, authentication systems, and server-side development"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Build responsive and user-friendly interfaces using React, Next.js, and Tailwind CSS"
+    },
+    {
+      "title": "Intern Mobile App Developer",
+      "description": "Develop cross-platform mobile applications using Flutter or React Native"
+    },
+    {
+      "title": "Intern UI/UX Designer",
+      "description": "Design clean, modern, and user-centered interfaces using Figma and industry best practices"
+    },
+    {
+      "title": "Intern Digital Marketing Executive",
+      "description": "Learn social media strategy, content creation, SEO basics, and campaign management"
+    },
+    {
+      "title": "Intern HR & Administration Executive",
+      "description": "Assist in recruitment, onboarding, and internal coordination processes"
+    }
+  ],
+  "email_e035fe7d71d0e5e010d18ca4e3f764d9": "rasandu17@gmail.com",
+  "positions_c8d198175796e20377fbf9738dc56e1c": [
+    {
+      "title": "Intern Software Engineer (Full Stack)",
+      "description": "Work on real-world web applications using modern technologies like React, Node.js, and MongoDB"
+    },
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with APIs, databases, authentication systems, and server-side development"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Build responsive and user-friendly interfaces using React, Next.js, and Tailwind CSS"
+    },
+    {
+      "title": "Intern Mobile App Developer",
+      "description": "Develop cross-platform mobile applications using Flutter or React Native"
+    },
+    {
+      "title": "Intern UI/UX Designer",
+      "description": "Design clean, modern, and user-centered interfaces using Figma and industry best practices"
+    },
+    {
+      "title": "Intern Digital Marketing Executive",
+      "description": "Learn social media strategy, content creation, SEO basics, and campaign management"
+    },
+    {
+      "title": "Intern HR & Administration Executive",
+      "description": "Assist in recruitment, onboarding, and internal coordination processes"
+    }
+  ],
+  "email_c8d198175796e20377fbf9738dc56e1c": "rasandu17@gmail.com",
+  "positions_f0324be17dc41640c7e62b69fc7aa07f": [
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with server-side technologies"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Gain hands-on experience with client-side technologies"
+    },
+    {
+      "title": "Intern HR Manager",
+      "description": "Assist with human resources management and recruitment"
+    }
+  ],
+  "email_f0324be17dc41640c7e62b69fc7aa07f": "nextgencodex2025@gmail.com",
+  "positions_5ed6d06fdda0368f38bda6c562f07a24": [
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with server-side technologies"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Gain hands-on experience with client-side technologies"
+    },
+    {
+      "title": "Intern HR Manager",
+      "description": "Assist with human resources management and recruitment"
+    }
+  ],
+  "email_5ed6d06fdda0368f38bda6c562f07a24": "nextgencodex2025@gmail.com",
+  "positions_6637ea3b4e6469a7f0ba8c589b0f8c80": [
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with server-side technologies and databases"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Work on modern web interfaces using React, NextJS, Tailwind CSS, and more"
+    },
+    {
+      "title": "Intern HR Manager",
+      "description": "Learn HR processes, recruitment, and team management in a dynamic environment"
+    }
+  ],
+  "email_6637ea3b4e6469a7f0ba8c589b0f8c80": "nextgencodex2025@gmail.com"
 }

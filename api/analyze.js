@@ -111,32 +111,69 @@ export default async function handler(req, res) {
 
     // Wrap AI processing with timeout (55s to leave buffer for Vercel's 60s limit)
     const result = await withTimeout((async () => {
-      // Step 2: Analyze job vs CV
-      console.log('🤖 Step 2: Analyzing job compatibility...');
-      const analysis = await geminiService.analyzeJobVsCV(jobText);
-      console.log('✅ Analysis complete');
+      // Step 1.5: Detect if there are multiple positions
+      console.log('🤖 Step 1.5: Detecting multiple positions...');
+      const positions = await geminiService.detectMultiplePositions(jobText);
+      
+      if (positions && positions.length > 1) {
+        // Multiple positions detected - show for selection
+        console.log(`📋 Multiple positions detected: ${positions.length}`);
+        
+        // Extract company email (common for all positions)
+        console.log('🤖 Extracting company email...');
+        const companyEmail = await geminiService.extractCompanyEmail(jobText);
+        
+        // DON'T analyze yet - wait for user to select position
+        console.log('💡 Skipping analysis - waiting for user selection');
+        
+        // Return positions for selection
+        const positionResults = positions.map((pos) => ({
+          title: pos.title,
+          description: pos.description
+        }));
+        
+        console.log('✅ Positions ready for selection');
+        
+        return {
+          jobText,
+          multiplePositions: true,
+          positions: positionResults,
+          companyEmail,
+          needsSelection: true, // Flag to show selection UI
+          success: true
+        };
+      } else {
+        // Single position - use original flow
+        console.log('📋 Single position detected');
+        
+        // Step 2: Analyze job vs CV
+        console.log('🤖 Step 2: Analyzing job compatibility...');
+        const analysis = await geminiService.analyzeJobVsCV(jobText);
+        console.log('✅ Analysis complete');
 
-      // Step 3: Extract company email and job title
-      console.log('🤖 Step 3: Extracting job details...');
-      const [companyEmail, jobTitle] = await Promise.all([
-        geminiService.extractCompanyEmail(jobText),
-        geminiService.extractJobTitle(jobText)
-      ]);
-      console.log('✅ Job details extracted');
+        // Step 3: Extract company email and job title
+        console.log('🤖 Step 3: Extracting job details...');
+        const [companyEmail, jobTitle] = await Promise.all([
+          geminiService.extractCompanyEmail(jobText),
+          geminiService.extractJobTitle(jobText)
+        ]);
+        console.log('✅ Job details extracted');
 
-      // Step 4: Generate professional email
-      console.log('🤖 Step 4: Generating email...');
-      const email = await geminiService.generateEmail(jobText);
-      console.log('✅ Email generated');
+        // Step 4: Generate professional email
+        console.log('🤖 Step 4: Generating email...');
+        const email = await geminiService.generateEmail(jobText);
+        console.log('✅ Email generated');
 
-      return {
-        jobText,
-        analysis,
-        email,
-        companyEmail,
-        jobTitle,
-        success: true
-      };
+        return {
+          jobText,
+          multiplePositions: false,
+          analysis,
+          email,
+          companyEmail,
+          jobTitle,
+          success: true
+        };
+      }
     })());
 
     console.log('✅ All processing complete, sending response');

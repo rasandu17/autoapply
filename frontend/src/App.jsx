@@ -6,15 +6,152 @@ import {
   CheckCircle2, 
   AlertCircle,
   Mail,
-  Loader2,
-  Briefcase,
-  ChevronRight
+  Loader2
 } from 'lucide-react';
 import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 /*  Components  */
+
+const PositionSelector = ({ positions, onSelectPosition, loading }) => {
+  return (
+    <div className="position-selector">
+      <div className="selector-header">
+        <h3>🎯 Found {positions.length} Open Positions</h3>
+        <p className="subtitle">Select the position you're interested in</p>
+      </div>
+      
+      <div className="position-options">
+        {positions.map((position, idx) => (
+          <button 
+            key={idx}
+            className="position-pill"
+            onClick={() => onSelectPosition(position)}
+            disabled={loading}
+          >
+            {position.title}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const PositionCard = ({ position, companyEmail, onSendEmail, sendingEmail, jobText }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [email, setEmail] = useState(position.email);
+  
+  const handleGenerateEmail = async () => {
+    setLoadingEmail(true);
+    try {
+      const res = await fetch(`${API_URL}/generate-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobText,
+          positionTitle: position.title
+        })
+      });
+      const data = await res.json();
+      if (data.email) {
+        setEmail(data.email);
+      }
+    } catch (err) {
+      console.error('Failed to generate email:', err);
+      setEmail('error');
+    } finally {
+      setLoadingEmail(false);
+    }
+  };
+  
+  return (
+    <div className="position-card">
+      <div className="position-header" onClick={() => setExpanded(!expanded)}>
+        <div>
+          <h3 className="position-title">{position.title}</h3>
+          <p className="position-description">{position.description}</p>
+        </div>
+        <div className="position-badges">
+          <span className={`pill ${position.analysis.compatibility >= 70 ? 'pill--green' : 'pill--orange'}`}>
+            {position.analysis.compatibility}% Match
+          </span>
+          <span className={`pill ${position.analysis.eligibility === 'Eligible' ? 'pill--green' : 'pill--red'}`}>
+            {position.analysis.eligibility}
+          </span>
+        </div>
+      </div>
+      
+      {expanded && (
+        <div className="position-details">
+          <div className="result-section">
+            <h4>Matching Skills</h4>
+            <div className="tags">
+              {position.analysis.matchingSkills.map((s, i) => (
+                <span key={i} className="tag tag--match"><CheckCircle2 size={12}/> {s}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="result-section">
+            <h4>Missing Skills</h4>
+            <div className="tags">
+              {position.analysis.missingSkills.map((s, i) => (
+                <span key={i} className="tag tag--missing">{s}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="result-section">
+            <h4>Application Email <span className="edit-hint">✏️ Click to edit</span></h4>
+            {!email ? (
+              <button 
+                className="generate-email-btn"
+                onClick={handleGenerateEmail}
+                disabled={loadingEmail}
+              >
+                {loadingEmail ? (
+                  <><Loader2 size={16} className="spinner" /> Generating Email...</>
+                ) : (
+                  <><Sparkles size={16} /> Generate Application Email</>
+                )}
+              </button>
+            ) : email === 'error' ? (
+              <p className="email-error">Failed to generate email. Please try again.</p>
+            ) : (
+              <>
+                <textarea 
+                  className="email-body editable-email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  rows={12}
+                />
+                {companyEmail && (
+                  <button 
+                    className="send-email-btn"
+                    onClick={() => onSendEmail({ 
+                      companyEmail, 
+                      jobTitle: position.title, 
+                      email: email 
+                    })}
+                    disabled={sendingEmail}
+                  >
+                    {sendingEmail ? (
+                      <><Loader2 size={16} className="spinner" /> Sending...</>
+                    ) : (
+                      <><Mail size={16} /> Send Application to {companyEmail}</>
+                    )}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const UserMessage = ({ content, image }) => (
   <div className="message message--user">
@@ -29,75 +166,160 @@ const UserMessage = ({ content, image }) => (
   </div>
 );
 
-const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail }) => (
-  <div className="message message--ai">
-    <div className="message-avatar message-avatar--ai">
-      <Sparkles size={18} color='#007AFF' />
-    </div>
-    <div className="message-content">
-      {loading ? (
-        <div className="typing-indicator">
-          <span></span><span></span><span></span>
-        </div>
-      ) : error ? (
-        <div className="error-box">
-          <AlertCircle size={18} /> {error}
-        </div>
-      ) : result ? (
-        <div className="analysis-result">
-          <div className="result-header">
-            <span className={`pill ${result.analysis.compatibility >= 70 ? 'pill--green' : 'pill--orange'}`}>
-              {result.analysis.compatibility}% Match
-            </span>
-            <span className={`pill ${result.analysis.eligibility === 'Eligible' ? 'pill--green' : 'pill--red'}`}>
-              {result.analysis.eligibility}
-            </span>
-          </div>
+const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition }) => {
+  const [editedEmail, setEditedEmail] = useState(result?.email || '');
+  
+  // Update editedEmail when result.email changes
+  useEffect(() => {
+    if (result?.email) {
+      setEditedEmail(result.email);
+    }
+  }, [result?.email]);
 
-          <div className="result-section">
-            <h4>Matching Skills</h4>
-            <div className="tags">
-              {result.analysis.matchingSkills.map((s, i) => (
-                <span key={i} className="tag tag--match"><CheckCircle2 size={12}/> {s}</span>
-              ))}
-            </div>
+  return (
+    <div className="message message--ai">
+      <div className="message-content">
+        {loading ? (
+          <div className="typing-indicator">
+            <span></span><span></span><span></span>
           </div>
-
-          <div className="result-section">
-            <h4>Missing Skills</h4>
-            <div className="tags">
-              {result.analysis.missingSkills.map((s, i) => (
-                <span key={i} className="tag tag--missing">{s}</span>
-              ))}
-            </div>
+        ) : error ? (
+          <div className="error-box">
+            <AlertCircle size={18} /> {error}
           </div>
+        ) : result ? (
+          <div className="analysis-result">
+            {/* Position Selection View */}
+            {result.needsSelection ? (
+              <PositionSelector 
+                positions={result.positions} 
+                onSelectPosition={onSelectPosition}
+                loading={analyzingPosition}
+              />
+            ) : result.multiplePositions ? (
+              /* Selected Position Analysis */
+              <div className="selected-position-result">
+                <div className="result-header">
+                  <h3 className="selected-position-title">{result.selectedPosition}</h3>
+                  <div className="result-badges">
+                    <span className={`pill ${result.analysis.compatibility >= 70 ? 'pill--green' : 'pill--orange'}`}>
+                      {result.analysis.compatibility}% Match
+                    </span>
+                    <span className={`pill ${result.analysis.eligibility === 'Eligible' ? 'pill--green' : 'pill--red'}`}>
+                      {result.analysis.eligibility}
+                    </span>
+                  </div>
+                </div>
 
-          {result.email && (
-            <div className="result-section">
-              <h4>Generated Application Email</h4>
-              <div className="email-body">
-                {result.email}
+                <div className="result-section">
+                  <h4>Matching Skills</h4>
+                  <div className="tags">
+                    {result.analysis.matchingSkills.map((s, i) => (
+                      <span key={i} className="tag tag--match"><CheckCircle2 size={12}/> {s}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="result-section">
+                  <h4>Missing Skills</h4>
+                  <div className="tags">
+                    {result.analysis.missingSkills.map((s, i) => (
+                      <span key={i} className="tag tag--missing">{s}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {result.email && (
+                  <div className="result-section">
+                    <h4>Generated Application Email <span className="edit-hint">✏️ Editable</span></h4>
+                    <textarea 
+                      className="email-body editable-email"
+                      value={editedEmail}
+                      onChange={(e) => setEditedEmail(e.target.value)}
+                      rows={12}
+                    />
+                    {result.companyEmail && (
+                      <button 
+                        className="send-email-btn"
+                        onClick={() => onSendEmail({ 
+                          companyEmail: result.companyEmail, 
+                          jobTitle: result.selectedPosition, 
+                          email: editedEmail 
+                        })}
+                        disabled={sendingEmail}
+                      >
+                        {sendingEmail ? (
+                          <><Loader2 size={16} className="spinner" /> Sending...</>
+                        ) : (
+                          <><Mail size={16} /> Send Application to {result.companyEmail}</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-              {result.companyEmail && (
-                <button 
-                  className="send-email-btn"
-                  onClick={() => onSendEmail(result)}
-                  disabled={sendingEmail}
-                >
-                  {sendingEmail ? (
-                    <><Loader2 size={16} className="spinner" /> Sending...</>
-                  ) : (
-                    <><Mail size={16} /> Send Application to {result.companyEmail}</>
-                  )}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      ) : null}
+            ) : (
+              /* Single Position View (Original) */
+              <>
+                <div className="result-header">
+                  <span className={`pill ${result.analysis.compatibility >= 70 ? 'pill--green' : 'pill--orange'}`}>
+                    {result.analysis.compatibility}% Match
+                  </span>
+                  <span className={`pill ${result.analysis.eligibility === 'Eligible' ? 'pill--green' : 'pill--red'}`}>
+                    {result.analysis.eligibility}
+                  </span>
+                </div>
+
+                <div className="result-section">
+                  <h4>Matching Skills</h4>
+                  <div className="tags">
+                    {result.analysis.matchingSkills.map((s, i) => (
+                      <span key={i} className="tag tag--match"><CheckCircle2 size={12}/> {s}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="result-section">
+                  <h4>Missing Skills</h4>
+                  <div className="tags">
+                    {result.analysis.missingSkills.map((s, i) => (
+                      <span key={i} className="tag tag--missing">{s}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {result.email && (
+                  <div className="result-section">
+                    <h4>Generated Application Email <span className="edit-hint">✏️ Editable</span></h4>
+                    <textarea 
+                      className="email-body editable-email"
+                      value={editedEmail}
+                      onChange={(e) => setEditedEmail(e.target.value)}
+                      rows={12}
+                    />
+                    {result.companyEmail && (
+                      <button 
+                        className="send-email-btn"
+                        onClick={() => onSendEmail({...result, email: editedEmail})}
+                        disabled={sendingEmail}
+                      >
+                        {sendingEmail ? (
+                          <><Loader2 size={16} className="spinner" /> Sending...</>
+                        ) : (
+                          <><Mail size={16} /> Send Application to {result.companyEmail}</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        ) : null}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 /*  Main App Component  */
 function App() {
@@ -105,6 +327,7 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [analyzingPosition, setAnalyzingPosition] = useState(false);
   
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
@@ -113,7 +336,7 @@ function App() {
     if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [chatHistory, loading]);
+  }, [chatHistory, loading, analyzingPosition]);
 
   const handleFileSelect = (e) => {
     if (e.target.files[0]) {
@@ -190,6 +413,51 @@ function App() {
     }
   };
 
+  const handleSelectPosition = async (position) => {
+    setAnalyzingPosition(true);
+    
+    try {
+      // Find the original result with jobText and companyEmail
+      const originalResult = chatHistory[chatHistory.length - 1].result;
+      
+      const res = await fetch(`${API_URL}/analyze-position`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobText: originalResult.jobText,
+          positionTitle: position.title,
+          positionDescription: position.description
+        })
+      });
+      
+      if (!res.ok) throw new Error('Failed to analyze position');
+      
+      const data = await res.json();
+      
+      // Update the last AI message with selected position analysis
+      setChatHistory(prev => {
+        const newHistory = [...prev];
+        newHistory[newHistory.length - 1] = {
+          role: 'ai',
+          result: {
+            ...originalResult,
+            needsSelection: false,
+            multiplePositions: true,
+            selectedPosition: position.title,
+            analysis: data.analysis,
+            email: data.email
+          }
+        };
+        return newHistory;
+      });
+      
+    } catch (err) {
+      alert(`Failed to analyze position: ${err.message}`);
+    } finally {
+      setAnalyzingPosition(false);
+    }
+  };
+
   return (
     <div className="app-container">
       
@@ -217,20 +485,7 @@ function App() {
                   </div>
                </div>
                <h1>Hello, Ravindu</h1>
-               <p className="subtitle">Ready to find your next opportunity?</p>
-               
-               <div className="suggestions">
-                  <div className="suggestion-card" onClick={() => setInputObj({...inputObj, text: "Analyze this text for a Senior React Developer role..."})}>
-                    <Briefcase size={24} className="suggestion-icon"/>
-                    <p>Analyze React Developer role</p>
-                    <ChevronRight size={16} color="#C7C7CC" style={{marginTop:'auto'}}/>
-                  </div>
-                  <div className="suggestion-card" onClick={() => fileInputRef.current?.click()}>
-                    <Paperclip size={24} className="suggestion-icon"/>
-                    <p>Analyze from Screenshot</p>
-                    <ChevronRight size={16} color="#C7C7CC" style={{marginTop:'auto'}}/>
-                  </div>
-               </div>
+               <p className="subtitle">Upload a job posting to get started</p>
             </div>
           ) : (
             <div className="message-list">
@@ -243,6 +498,8 @@ function App() {
                        error={msg.error}
                        onSendEmail={handleSendEmail}
                        sendingEmail={sendingEmail}
+                       onSelectPosition={handleSelectPosition}
+                       analyzingPosition={analyzingPosition}
                      />
                ))}
                {loading && <AIMessage loading={true} />}
@@ -251,7 +508,7 @@ function App() {
         </div>
 
         {/* Input Area (Fixed Bottom) */}
-        <div className="input-area">
+        <div className={`input-area ${chatHistory.length === 0 ? 'input-area--empty' : ''}`}>
            <div className="input-container">
               <button className="icon-btn" onClick={() => fileInputRef.current?.click()}>
                  <Paperclip size={20} />
