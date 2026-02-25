@@ -166,7 +166,7 @@ const UserMessage = ({ content, image }) => (
   </div>
 );
 
-const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition }) => {
+const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition, onStartNew }) => {
   const [editedEmail, setEditedEmail] = useState(result?.email || '');
   
   // Update editedEmail when result.email changes
@@ -238,23 +238,28 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                       onChange={(e) => setEditedEmail(e.target.value)}
                       rows={12}
                     />
-                    {result.companyEmail && (
-                      <button 
-                        className="send-email-btn"
-                        onClick={() => onSendEmail({ 
-                          companyEmail: result.companyEmail, 
-                          jobTitle: result.selectedPosition, 
-                          email: editedEmail 
-                        })}
-                        disabled={sendingEmail}
-                      >
-                        {sendingEmail ? (
-                          <><Loader2 size={16} className="spinner" /> Sending...</>
-                        ) : (
-                          <><Mail size={16} /> Send Application to {result.companyEmail}</>
-                        )}
+                    <div className="email-actions">
+                      {result.companyEmail && (
+                        <button 
+                          className="send-email-btn"
+                          onClick={() => onSendEmail({ 
+                            companyEmail: result.companyEmail, 
+                            jobTitle: result.selectedPosition, 
+                            email: editedEmail 
+                          })}
+                          disabled={sendingEmail}
+                        >
+                          {sendingEmail ? (
+                            <><Loader2 size={16} className="spinner" /> Sending...</>
+                          ) : (
+                            <><Mail size={16} /> Send Application to {result.companyEmail}</>
+                          )}
+                        </button>
+                      )}
+                      <button className="start-new-btn" onClick={onStartNew}>
+                        ✨ Start New Application
                       </button>
-                    )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -297,19 +302,24 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                       onChange={(e) => setEditedEmail(e.target.value)}
                       rows={12}
                     />
-                    {result.companyEmail && (
-                      <button 
-                        className="send-email-btn"
-                        onClick={() => onSendEmail({...result, email: editedEmail})}
-                        disabled={sendingEmail}
-                      >
-                        {sendingEmail ? (
-                          <><Loader2 size={16} className="spinner" /> Sending...</>
-                        ) : (
-                          <><Mail size={16} /> Send Application to {result.companyEmail}</>
-                        )}
+                    <div className="email-actions">
+                      {result.companyEmail && (
+                        <button 
+                          className="send-email-btn"
+                          onClick={() => onSendEmail({...result, email: editedEmail})}
+                          disabled={sendingEmail}
+                        >
+                          {sendingEmail ? (
+                            <><Loader2 size={16} className="spinner" /> Sending...</>
+                          ) : (
+                            <><Mail size={16} /> Send Application to {result.companyEmail}</>
+                          )}
+                        </button>
+                      )}
+                      <button className="start-new-btn" onClick={onStartNew}>
+                        ✨ Start New Application
                       </button>
-                    )}
+                    </div>
                   </div>
                 )}
               </>
@@ -331,6 +341,14 @@ function App() {
   
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
+
+  const handleStartNew = () => {
+    setChatHistory([]);
+    setInputObj({ text: '', file: null });
+    setLoading(false);
+    setSendingEmail(false);
+    setAnalyzingPosition(false);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -500,6 +518,7 @@ function App() {
                        sendingEmail={sendingEmail}
                        onSelectPosition={handleSelectPosition}
                        analyzingPosition={analyzingPosition}
+                       onStartNew={handleStartNew}
                      />
                ))}
                {loading && <AIMessage loading={true} />}

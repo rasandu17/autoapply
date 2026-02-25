@@ -662,8 +662,14 @@
   opacity: 0.8;
 }
 
-.send-email-btn {
+.email-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 20px;
+}
+
+.send-email-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -683,6 +689,30 @@
 .send-email-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 122, 255, 0.35);
+}
+
+.start-new-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.start-new-btn:hover {
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Typing Indicator */
