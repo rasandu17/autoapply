@@ -44,14 +44,16 @@ Edit `.env` with your credentials:
 
 ```env
 PORT=5000
-GEMINI_API_KEY=your_actual_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+GEMINI_API_KEY=your_gemini_api_key
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASSWORD=your_gmail_app_password
 EMAIL_NAME=Your Full Name
 ```
 
 **Important**: 
-- Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **Groq API**: Get your FREE API key from [Groq Console](https://console.groq.com/keys) - 500 requests/day
+- **Gemini API**: Get your key from [Google AI Studio](https://makersuite.google.com/app/apikey) - used for OCR only
 - For Gmail, use an [App Password](https://myaccount.google.com/apppasswords) (not your regular password)
 
 ### 4. Add Your CV

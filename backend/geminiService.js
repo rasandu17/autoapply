@@ -234,10 +234,11 @@ ${jobText}
 
 Requirements:
 - MUST start with "Dear Hiring Team,"
-- Professional and confident tone
+- Write like a real person - professional but conversational and friendly
+- Use simple, everyday language - no corporate jargon or heavy words
 - VERY CONCISE (100-150 words maximum)
-- Use simple, direct language - avoid fancy words like "enthusiastic", "passionate", "eager", "thrilled"
-- Brief introduction (1 sentence)
+- Brief introduction (1 sentence) - straightforward, no flowery language
+- Vary sentence structure - DON'T start every sentence with "I" or "I'm". Mix it up with different openings
 - Mention 2-3 most relevant skills/experiences only
 - When mentioning projects, DO NOT use specific project names. Instead categorize them as:
   * Government/real-world projects
@@ -245,10 +246,11 @@ Requirements:
   * University assignments
   * Personal projects
   * Hackathon participation
-- One sentence about why you're a good fit
+- One sentence about why you're a good fit - keep it natural and genuine
 - Mention CV attachment
 - DO NOT include contact details or signature at the end
-- Sound professional but natural and straightforward
+- Avoid words like: "enthusiastic", "passionate", "eager", "thrilled", "excited", "leverage", "utilize", "synergy"
+- Sound like a confident professional having a natural conversation, not reading from a template
 
 Keep it short and impactful. Return ONLY the email body text.`
     }];
@@ -438,10 +440,11 @@ APPLYING FOR: ${positionTitle}
 
 Requirements:
 - MUST start with "Dear Hiring Team,"
-- Professional and confident tone
+- Write like a real person - professional but conversational and friendly
+- Use simple, everyday language - no corporate jargon or heavy words
 - VERY CONCISE (100-150 words maximum)
-- Use simple, direct language - avoid fancy words like "enthusiastic", "passionate", "eager", "thrilled"
-- Brief introduction (1 sentence) - mention you're applying for ${positionTitle}
+- Brief introduction (1 sentence) - mention you're applying for ${positionTitle}, keep it straightforward
+- Vary sentence structure - DON'T start every sentence with "I" or "I'm". Mix it up with different openings
 - Mention 2-3 most relevant skills/experiences for THIS SPECIFIC POSITION only
 - When mentioning projects, DO NOT use specific project names. Instead categorize them as:
   * Government/real-world projects
@@ -449,10 +452,11 @@ Requirements:
   * University assignments
   * Personal projects
   * Hackathon participation
-- One sentence about why you're a good fit for THIS SPECIFIC ROLE
+- One sentence about why you're a good fit for THIS SPECIFIC ROLE - keep it natural and genuine
 - Mention CV attachment
 - DO NOT include contact details or signature at the end
-- Sound professional but natural and straightforward
+- Avoid words like: "enthusiastic", "passionate", "eager", "thrilled", "excited", "leverage", "utilize", "synergy"
+- Sound like a confident professional having a natural conversation, not reading from a template
 
 Keep it short and impactful. Return ONLY the email body text.
 `

@@ -11,10 +11,10 @@ Before deploying, make sure you have:
 1. **GitHub Account** (to connect with Vercel)
 2. **Vercel Account** (sign up at [vercel.com](https://vercel.com))
 3. **Environment Variables Ready**:
-   - `GEMINI_API_KEY` - Your Google Gemini API key
+   - `GROQ_API_KEY` - Your Groq API key (primary AI provider - FREE 500 requests/day)
+   - `GEMINI_API_KEY` - Your Google Gemini API key (for OCR/image text extraction only)
    - `EMAIL_USER` - Your email address (for sending applications)
    - `EMAIL_PASS` - Your email app password
-   - `OPENAI_API_KEY` - (Optional) If using OpenAI
 
 ---
 
@@ -88,14 +88,16 @@ Vercel should auto-detect settings, but verify:
 Click **"Environment Variables"** and add these:
 
 ```
+GROQ_API_KEY=your_groq_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password_here
 ```
 
 **Important**: 
-- For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833), not your regular password
-- Get Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **GROQ_API_KEY**: Get your FREE API key from [Groq Console](https://console.groq.com/keys) - 500 requests/day free tier
+- **GEMINI_API_KEY**: Get from [Google AI Studio](https://makersuite.google.com/app/apikey) - used ONLY for OCR (image text extraction)
+- **EMAIL_PASS**: For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833), not your regular password
 
 ### 2.5 Deploy!
 
@@ -156,7 +158,7 @@ git push
 **Cause**: Vercel free tier has 10-second timeout  
 **Solution**: 
 - Optimize image size before OCR
-- Use caching for Gemini responses
+- Response caching is already implemented
 - Upgrade to Vercel Pro for 60s timeout (if needed)
 
 ### Issue: Environment variables not working

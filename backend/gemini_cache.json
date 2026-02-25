@@ -167,5 +167,50 @@
       "description": "Learn HR processes, recruitment, and team management in a dynamic environment"
     }
   ],
-  "email_6637ea3b4e6469a7f0ba8c589b0f8c80": "nextgencodex2025@gmail.com"
+  "email_6637ea3b4e6469a7f0ba8c589b0f8c80": "nextgencodex2025@gmail.com",
+  "positions_7f3cc85e1f862d084440d10b84f54aef": null,
+  "analysis_7f3cc85e1f862d084440d10b84f54aef": {
+    "compatibility": 90,
+    "matchingSkills": [
+      "programming",
+      "software development",
+      "problem-solving",
+      "web development",
+      "mobile development"
+    ],
+    "missingSkills": [
+      "none"
+    ],
+    "eligibility": "Eligible"
+  },
+  "email_7f3cc85e1f862d084440d10b84f54aef": null,
+  "title_7f3cc85e1f862d084440d10b84f54aef": "Intern Software Engineer",
+  "positions_7ae010cc3714c490e869c99eada4952e": null,
+  "analysis_7ae010cc3714c490e869c99eada4952e": {
+    "compatibility": 60,
+    "matchingSkills": [
+      "React",
+      "JavaScript"
+    ],
+    "missingSkills": [
+      "Go",
+      "Next.js"
+    ],
+    "eligibility": "Eligible"
+  },
+  "email_7ae010cc3714c490e869c99eada4952e": "dilmini@leadinnovationz.lk",
+  "title_7ae010cc3714c490e869c99eada4952e": "Intern Software Engineer",
+  "positions_266166b22e8810b4211ba5295ac55fab": null,
+  "analysis_266166b22e8810b4211ba5295ac55fab": {
+    "compatibility": 85,
+    "matchingSkills": [
+      "React",
+      "JavaScript",
+      "Next.js"
+    ],
+    "missingSkills": [],
+    "eligibility": "Eligible"
+  },
+  "email_266166b22e8810b4211ba5295ac55fab": null,
+  "title_266166b22e8810b4211ba5295ac55fab": "Software Developer"
 }
