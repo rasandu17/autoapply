@@ -8,6 +8,11 @@ yarn-error.log*
 .env
 .env.local
 
+# Google Service Account Credentials (sensitive)
+backend/google-credentials.json
+api/google-credentials.json
+google-credentials.json
+
 # CV files (personal data - keep specific CV for deployment)
 backend/cv.pdf
 backend/cv.txt

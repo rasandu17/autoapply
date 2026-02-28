@@ -669,6 +669,16 @@
   margin-top: 20px;
 }
 
+.button-group {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.button-group > button {
+  flex: 1;
+}
+
 .send-email-btn {
   display: inline-flex;
   align-items: center;
@@ -681,7 +691,6 @@
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  width: 100%;
   border: none;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
@@ -689,6 +698,35 @@
 .send-email-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 122, 255, 0.35);
+}
+
+.tracker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #34C759, #30D158);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.25);
+}
+
+.tracker-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(52, 199, 89, 0.35);
+}
+
+.tracker-btn:disabled,
+.send-email-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .start-new-btn {

@@ -212,5 +212,36 @@
     "eligibility": "Eligible"
   },
   "email_266166b22e8810b4211ba5295ac55fab": null,
-  "title_266166b22e8810b4211ba5295ac55fab": "Software Developer"
+  "title_266166b22e8810b4211ba5295ac55fab": "Software Developer",
+  "positions_67bb97892ccd674740a342aea3426a29": [
+    {
+      "title": "Intern Software Engineer (Full Stack)",
+      "description": "Work on real-world web applications using modern technologies like React, Node.js, and MongoDB"
+    },
+    {
+      "title": "Intern Backend Developer",
+      "description": "Gain hands-on experience with APIs, databases, authentication systems, and server-side development"
+    },
+    {
+      "title": "Intern Frontend Developer",
+      "description": "Build responsive and user-friendly interfaces using React, Next.js, and Tailwind CSS"
+    },
+    {
+      "title": "Intern Mobile App Developer",
+      "description": "Develop cross-platform mobile applications using Flutter or React Native"
+    },
+    {
+      "title": "Intern UI/UX Designer",
+      "description": "Design clean, modern, and user-centered interfaces using Figma and industry best practices"
+    },
+    {
+      "title": "Intern Digital Marketing Executive",
+      "description": "Learn social media strategy, content creation, SEO basics, and campaign management"
+    },
+    {
+      "title": "Intern HR & Administration Executive",
+      "description": "Assist in recruitment, onboarding, and internal coordination processes"
+    }
+  ],
+  "email_67bb97892ccd674740a342aea3426a29": "rasadu17@gmail.com"
 }

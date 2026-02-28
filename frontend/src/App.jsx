@@ -6,7 +6,8 @@ import {
   CheckCircle2, 
   AlertCircle,
   Mail,
-  Loader2
+  Loader2,
+  Sheet
 } from 'lucide-react';
 import './App.css';
 
@@ -166,7 +167,7 @@ const UserMessage = ({ content, image }) => (
   </div>
 );
 
-const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition, onStartNew }) => {
+const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition, onStartNew, onAddToTracker, addingToTracker }) => {
   const [editedEmail, setEditedEmail] = useState(result?.email || '');
   
   // Update editedEmail when result.email changes
@@ -239,23 +240,40 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                       rows={12}
                     />
                     <div className="email-actions">
-                      {result.companyEmail && (
+                      <div className="button-group">
+                        {result.companyEmail && (
+                          <button 
+                            className="send-email-btn"
+                            onClick={() => onSendEmail({ 
+                              companyEmail: result.companyEmail, 
+                              jobTitle: result.selectedPosition, 
+                              email: editedEmail 
+                            })}
+                            disabled={sendingEmail}
+                          >
+                            {sendingEmail ? (
+                              <><Loader2 size={16} className="spinner" /> Sending...</>
+                            ) : (
+                              <><Mail size={16} /> Send Application</>
+                            )}
+                          </button>
+                        )}
                         <button 
-                          className="send-email-btn"
-                          onClick={() => onSendEmail({ 
-                            companyEmail: result.companyEmail, 
-                            jobTitle: result.selectedPosition, 
-                            email: editedEmail 
+                          className="tracker-btn"
+                          onClick={() => onAddToTracker({
+                            jobTitle: result.selectedPosition,
+                            companyEmail: result.companyEmail,
+                            matchPercentage: result.analysis?.compatibility
                           })}
-                          disabled={sendingEmail}
+                          disabled={addingToTracker}
                         >
-                          {sendingEmail ? (
-                            <><Loader2 size={16} className="spinner" /> Sending...</>
+                          {addingToTracker ? (
+                            <><Loader2 size={16} className="spinner" /> Adding...</>
                           ) : (
-                            <><Mail size={16} /> Send Application to {result.companyEmail}</>
+                            <><Sheet size={16} /> Add to Tracker</>
                           )}
                         </button>
-                      )}
+                      </div>
                       <button className="start-new-btn" onClick={onStartNew}>
                         ✨ Start New Application
                       </button>
@@ -303,19 +321,36 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                       rows={12}
                     />
                     <div className="email-actions">
-                      {result.companyEmail && (
+                      <div className="button-group">
+                        {result.companyEmail && (
+                          <button 
+                            className="send-email-btn"
+                            onClick={() => onSendEmail({...result, email: editedEmail})}
+                            disabled={sendingEmail}
+                          >
+                            {sendingEmail ? (
+                              <><Loader2 size={16} className="spinner" /> Sending...</>
+                            ) : (
+                              <><Mail size={16} /> Send Application</>
+                            )}
+                          </button>
+                        )}
                         <button 
-                          className="send-email-btn"
-                          onClick={() => onSendEmail({...result, email: editedEmail})}
-                          disabled={sendingEmail}
+                          className="tracker-btn"
+                          onClick={() => onAddToTracker({
+                            jobTitle: result.jobTitle,
+                            companyEmail: result.companyEmail,
+                            matchPercentage: result.analysis?.compatibility
+                          })}
+                          disabled={addingToTracker}
                         >
-                          {sendingEmail ? (
-                            <><Loader2 size={16} className="spinner" /> Sending...</>
+                          {addingToTracker ? (
+                            <><Loader2 size={16} className="spinner" /> Adding...</>
                           ) : (
-                            <><Mail size={16} /> Send Application to {result.companyEmail}</>
+                            <><Sheet size={16} /> Add to Tracker</>
                           )}
                         </button>
-                      )}
+                      </div>
                       <button className="start-new-btn" onClick={onStartNew}>
                         ✨ Start New Application
                       </button>
@@ -338,6 +373,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [analyzingPosition, setAnalyzingPosition] = useState(false);
+  const [addingToTracker, setAddingToTracker] = useState(false);
   
   const fileInputRef = useRef(null);
   const scrollRef = useRef(null);
@@ -348,6 +384,33 @@ function App() {
     setLoading(false);
     setSendingEmail(false);
     setAnalyzingPosition(false);
+    setAddingToTracker(false);
+  };
+
+  const handleAddToTracker = async (applicationData) => {
+    setAddingToTracker(true);
+    try {
+      const res = await fetch(`${API_URL}/add-to-tracker`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(applicationData)
+      });
+      
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to add to tracker');
+      }
+      
+      alert('✅ Added to job tracker successfully!');
+    } catch (err) {
+      if (err.message.includes('not configured')) {
+        alert('⚠️ Google Sheets tracking not configured.\n\nTo enable:\n1. Set up Google Service Account\n2. Add credentials file\n3. Set GOOGLE_SHEET_ID in .env');
+      } else {
+        alert(`Failed to add to tracker: ${err.message}`);
+      }
+    } finally {
+      setAddingToTracker(false);
+    }
   };
 
   useEffect(() => {
@@ -519,6 +582,8 @@ function App() {
                        onSelectPosition={handleSelectPosition}
                        analyzingPosition={analyzingPosition}
                        onStartNew={handleStartNew}
+                       onAddToTracker={handleAddToTracker}
+                       addingToTracker={addingToTracker}
                      />
                ))}
                {loading && <AIMessage loading={true} />}

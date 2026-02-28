@@ -10,6 +10,7 @@ require('dotenv').config();
 const geminiService = require('./geminiService');
 const emailService = require('./emailService');
 const ocrService = require('./ocrService');
+const sheetsService = require('./sheetsService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -211,6 +212,72 @@ app.post('/api/send-email', async (req, res) => {
       error: 'Failed to send email', 
       details: error.message 
     });
+  }
+});
+
+// Add to Google Sheets tracker
+app.post('/api/add-to-tracker', async (req, res) => {
+  try {
+    const { jobTitle, companyEmail, matchPercentage, notes } = req.body;
+
+    if (!jobTitle || !companyEmail) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: jobTitle and companyEmail' 
+      });
+    }
+
+    // Check if Google Sheets is configured
+    if (!sheetsService.isConfigured()) {
+      return res.status(503).json({ 
+        error: 'Google Sheets not configured',
+        message: 'Please set up Google Sheets integration to use tracking feature'
+      });
+    }
+
+    console.log(`📊 Adding to tracker: ${jobTitle}`);
+    
+    const result = await sheetsService.addToTracker({
+      jobTitle,
+      companyEmail,
+      matchPercentage,
+      notes
+    });
+
+    res.json({ 
+      success: true, 
+      message: 'Added to tracker successfully!',
+      updatedCells: result.updatedCells 
+    });
+
+  } catch (error) {
+    console.error('Error adding to tracker:', error.message);
+    res.status(500).json({ 
+      error: 'Failed to add to tracker', 
+      details: error.message 
+    });
+  }
+});
+
+// Check Google Sheets status
+app.get('/api/tracker-status', (req, res) => {
+  const isConfigured = sheetsService.isConfigured();
+  res.json({ 
+    configured: isConfigured,
+    message: isConfigured ? 'Tracking enabled' : 'Tracking not configured'
+  });
+});
+
+// Fix Google Sheets headers (if they're missing)
+app.post('/api/fix-tracker-headers', async (req, res) => {
+  try {
+    const result = await sheetsService.fixHeaders();
+    if (result.success) {
+      res.json({ success: true, message: 'Headers fixed successfully!' });
+    } else {
+      res.status(500).json({ error: result.error });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
