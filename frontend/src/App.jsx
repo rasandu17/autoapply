@@ -633,38 +633,45 @@ function App() {
           )}
         </div>
 
-        {/* Input Area (Fixed Bottom) */}
-        <div className={`input-area ${chatHistory.length === 0 ? 'input-area--empty' : ''}`}>
-           <div className="input-container">
-              <button className="icon-btn" onClick={() => fileInputRef.current?.click()}>
-                 <Paperclip size={20} />
-                 {inputObj.file && <div style={{
-                     position:'absolute', top:8, right:8, width:8, height:8, 
-                     borderRadius:'50%', background:'red'
-                 }}/>}
-              </button>
-              <input 
-                 type="file" 
-                 ref={fileInputRef} 
-                 style={{display: 'none'}} 
-                 accept="image/*"
-                 onChange={handleFileSelect}
-              />
-              
-              <textarea 
-                className="text-input"
-                placeholder="Ask anything..."
-                value={inputObj.text}
-                onChange={(e) => setInputObj({...inputObj, text: e.target.value})}
-                onKeyDown={handleKeyPress}
-                rows={1}
-              />
-              
-              <button className="send-btn" onClick={handleSend} disabled={!inputObj.text && !inputObj.file}>
-                 <Send size={20} />
-              </button>
-           </div>
-        </div>
+        {/* Input Area (Fixed Bottom) - Hide when email is generated */}
+        {(() => {
+          const lastAIMessage = chatHistory.filter(msg => msg.role === 'ai').pop();
+          const hasEmailGenerated = lastAIMessage?.result?.email && !lastAIMessage?.result?.needsSelection;
+          
+          return !hasEmailGenerated ? (
+            <div className={`input-area ${chatHistory.length === 0 ? 'input-area--empty' : ''}`}>
+              <div className="input-container">
+                <button className="icon-btn" onClick={() => fileInputRef.current?.click()}>
+                  <Paperclip size={20} />
+                  {inputObj.file && <div style={{
+                      position:'absolute', top:8, right:8, width:8, height:8, 
+                      borderRadius:'50%', background:'red'
+                  }}/>}
+                </button>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  style={{display: 'none'}} 
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                />
+                
+                <textarea 
+                  className="text-input"
+                  placeholder="Ask anything..."
+                  value={inputObj.text}
+                  onChange={(e) => setInputObj({...inputObj, text: e.target.value})}
+                  onKeyDown={handleKeyPress}
+                  rows={1}
+                />
+                
+                <button className="send-btn" onClick={handleSend} disabled={!inputObj.text && !inputObj.file}>
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          ) : null;
+        })()}
 
       </main>
     </div>
