@@ -112,7 +112,19 @@
 
 @media (max-width: 768px) {
   .welcome-screen {
-    padding-bottom: 180px;
+    padding-bottom: 50px;
+    padding-top: 60px;
+    justify-content: flex-start;
+  }
+
+  .welcome-screen h1 {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .welcome-screen .subtitle {
+    font-size: 16px;
+    margin-bottom: 24px;
   }
 }
 
@@ -269,10 +281,12 @@
     width: 95%;
   }
   
-  /* Only center vertically when chat is empty (welcome screen) */
+  /* Position input in middle area on welcome screen */
   .input-area--empty {
-    bottom: 80px;
-    transform: translateX(-50%);
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 40px;
   }
 }
 
