@@ -112,7 +112,7 @@
 
 @media (max-width: 768px) {
   .welcome-screen {
-    padding-bottom: 100px;
+    padding-bottom: 180px;
   }
 }
 
@@ -271,8 +271,8 @@
   
   /* Only center vertically when chat is empty (welcome screen) */
   .input-area--empty {
-    bottom: 50%;
-    transform: translate(-50%, 50%);
+    bottom: 80px;
+    transform: translateX(-50%);
   }
 }
 
