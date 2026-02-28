@@ -43,6 +43,7 @@ const PositionCard = ({ position, companyEmail, onSendEmail, sendingEmail, jobTe
   const [expanded, setExpanded] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [email, setEmail] = useState(position.email);
+  const [editableCompanyEmail, setEditableCompanyEmail] = useState(companyEmail);
   
   const handleGenerateEmail = async () => {
     setLoadingEmail(true);
@@ -122,17 +123,28 @@ const PositionCard = ({ position, companyEmail, onSendEmail, sendingEmail, jobTe
               <p className="email-error">Failed to generate email. Please try again.</p>
             ) : (
               <>
+                <div className="email-recipient-field">
+                  <label htmlFor="recipient-email">To:</label>
+                  <input
+                    type="email"
+                    id="recipient-email"
+                    className="recipient-email-input"
+                    value={editableCompanyEmail}
+                    onChange={(e) => setEditableCompanyEmail(e.target.value)}
+                    placeholder="company@example.com"
+                  />
+                </div>
                 <textarea 
                   className="email-body editable-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   rows={12}
                 />
-                {companyEmail && (
+                {editableCompanyEmail && (
                   <button 
                     className="send-email-btn"
                     onClick={() => onSendEmail({ 
-                      companyEmail, 
+                      companyEmail: editableCompanyEmail, 
                       jobTitle: position.title, 
                       email: email 
                     })}
@@ -141,7 +153,7 @@ const PositionCard = ({ position, companyEmail, onSendEmail, sendingEmail, jobTe
                     {sendingEmail ? (
                       <><Loader2 size={16} className="spinner" /> Sending...</>
                     ) : (
-                      <><Mail size={16} /> Send Application to {companyEmail}</>
+                      <><Mail size={16} /> Send Application</>
                     )}
                   </button>
                 )}
@@ -169,6 +181,7 @@ const UserMessage = ({ content, image }) => (
 
 const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition, onStartNew, onAddToTracker, addingToTracker }) => {
   const [editedEmail, setEditedEmail] = useState(result?.email || '');
+  const [editableCompanyEmail, setEditableCompanyEmail] = useState(result?.companyEmail || '');
   
   // Update editedEmail when result.email changes
   useEffect(() => {
@@ -176,6 +189,13 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
       setEditedEmail(result.email);
     }
   }, [result?.email]);
+
+  // Update editableCompanyEmail when result.companyEmail changes
+  useEffect(() => {
+    if (result?.companyEmail) {
+      setEditableCompanyEmail(result.companyEmail);
+    }
+  }, [result?.companyEmail]);
 
   return (
     <div className="message message--ai">
@@ -233,6 +253,17 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                 {result.email && (
                   <div className="result-section">
                     <h4>Generated Application Email <span className="edit-hint">✏️ Editable</span></h4>
+                    <div className="email-recipient-field">
+                      <label htmlFor="recipient-email-multi">To:</label>
+                      <input
+                        type="email"
+                        id="recipient-email-multi"
+                        className="recipient-email-input"
+                        value={editableCompanyEmail}
+                        onChange={(e) => setEditableCompanyEmail(e.target.value)}
+                        placeholder="company@example.com"
+                      />
+                    </div>
                     <textarea 
                       className="email-body editable-email"
                       value={editedEmail}
@@ -241,11 +272,11 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                     />
                     <div className="email-actions">
                       <div className="button-group">
-                        {result.companyEmail && (
+                        {editableCompanyEmail && (
                           <button 
                             className="send-email-btn"
                             onClick={() => onSendEmail({ 
-                              companyEmail: result.companyEmail, 
+                              companyEmail: editableCompanyEmail, 
                               jobTitle: result.selectedPosition, 
                               email: editedEmail 
                             })}
@@ -262,7 +293,7 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                           className="tracker-btn"
                           onClick={() => onAddToTracker({
                             jobTitle: result.selectedPosition,
-                            companyEmail: result.companyEmail,
+                            companyEmail: editableCompanyEmail,
                             matchPercentage: result.analysis?.compatibility
                           })}
                           disabled={addingToTracker}
@@ -314,6 +345,17 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                 {result.email && (
                   <div className="result-section">
                     <h4>Generated Application Email <span className="edit-hint">✏️ Editable</span></h4>
+                    <div className="email-recipient-field">
+                      <label htmlFor="recipient-email-single">To:</label>
+                      <input
+                        type="email"
+                        id="recipient-email-single"
+                        className="recipient-email-input"
+                        value={editableCompanyEmail}
+                        onChange={(e) => setEditableCompanyEmail(e.target.value)}
+                        placeholder="company@example.com"
+                      />
+                    </div>
                     <textarea 
                       className="email-body editable-email"
                       value={editedEmail}
@@ -322,10 +364,10 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                     />
                     <div className="email-actions">
                       <div className="button-group">
-                        {result.companyEmail && (
+                        {editableCompanyEmail && (
                           <button 
                             className="send-email-btn"
-                            onClick={() => onSendEmail({...result, email: editedEmail})}
+                            onClick={() => onSendEmail({...result, companyEmail: editableCompanyEmail, email: editedEmail})}
                             disabled={sendingEmail}
                           >
                             {sendingEmail ? (
@@ -339,7 +381,7 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
                           className="tracker-btn"
                           onClick={() => onAddToTracker({
                             jobTitle: result.jobTitle,
-                            companyEmail: result.companyEmail,
+                            companyEmail: editableCompanyEmail,
                             matchPercentage: result.analysis?.compatibility
                           })}
                           disabled={addingToTracker}

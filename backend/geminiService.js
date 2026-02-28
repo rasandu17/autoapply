@@ -233,7 +233,7 @@ JOB DESCRIPTION:
 ${jobText}
 
 Requirements:
-- MUST start with "Dear Hiring Team,"
+- MUST start with "Dear Hiring Team," followed by a blank line
 - Write like a real person - professional but conversational and friendly
 - Use simple, everyday language - no corporate jargon or heavy words
 - VERY CONCISE (100-150 words maximum)
@@ -439,7 +439,7 @@ ${jobText}
 APPLYING FOR: ${positionTitle}
 
 Requirements:
-- MUST start with "Dear Hiring Team,"
+- MUST start with "Dear Hiring Team," followed by a blank line
 - Write like a real person - professional but conversational and friendly
 - Use simple, everyday language - no corporate jargon or heavy words
 - VERY CONCISE (100-150 words maximum)

@@ -80,7 +80,7 @@
 
 @media (max-width: 768px) {
   .chat-feed {
-    padding: 16px 12px 120px;
+    padding: 16px 8px 120px;
   }
 }
 
@@ -188,6 +188,20 @@
     font-size: 14px;
     padding: 12px 16px;
     max-width: 85%;
+  }
+  
+  /* User messages more compact on mobile */
+  .message--user .message-content {
+    font-size: 13px;
+    padding: 10px 14px;
+    max-width: 75%;
+    line-height: 1.4;
+  }
+  
+  /* AI messages should be full width on mobile for better readability */
+  .message--ai .message-content {
+    max-width: 100%;
+    padding: 16px;
   }
   
   .message-content p {
@@ -358,6 +372,7 @@
   display: inline-flex;
   align-items: center;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .pill--green { background: #E4F7EB; color: #00873D; }
@@ -481,6 +496,7 @@
 
 .result-badges {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 24px;
 }
@@ -662,6 +678,45 @@
   opacity: 0.8;
 }
 
+/* Email Recipient Field */
+.email-recipient-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.email-recipient-field label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.recipient-email-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  font-family: var(--font-primary);
+  padding: 4px 0;
+}
+
+.recipient-email-input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.recipient-email-input:focus {
+  outline: none;
+}
+
 .email-actions {
   display: flex;
   flex-direction: column;
@@ -782,4 +837,75 @@
   border-radius: 12px;
   font-size: 14px;
   border: 1px solid #FECDCA;
+}
+
+/* Mobile Responsive Improvements */
+@media (max-width: 768px) {
+  /* Email body more compact on mobile */
+  .email-body {
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Email recipient field on mobile */
+  .email-recipient-field {
+    padding: 10px 12px;
+    margin-top: 12px;
+    margin-bottom: 10px;
+  }
+
+  .email-recipient-field label {
+    font-size: 14px;
+  }
+
+  .recipient-email-input {
+    font-size: 14px;
+  }
+
+  /* Result sections more compact */
+  .result-section:last-child {
+    padding: 16px;
+  }
+
+  /* Buttons stack on very small screens */
+  @media (max-width: 480px) {
+    .button-group {
+      flex-direction: column;
+    }
+    
+    .button-group > button {
+      width: 100%;
+    }
+  }
+
+  /* Pills and badges mobile responsive */
+  .pill {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .result-badges {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  /* Tags/pills wrap better */
+  .tags {
+    gap: 6px;
+  }
+
+  .tag {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  /* Position cards more compact */
+  .position-header {
+    padding: 16px;
+  }
+
+  .position-details {
+    padding: 0 16px 16px 16px;
+  }
 }
