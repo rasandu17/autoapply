@@ -24,48 +24,64 @@ git push
 
 ---
 
-### Step 2: Add New Environment Variable (Optional - for Tracking)
+### Step 2: Add Environment Variables (Optional - for Tracking)
 
-If you want Google Sheets tracking on your hosted version:
+If you want Google Sheets tracking on your hosted version, add these two variables:
 
 1. Go to [Vercel Dashboard](https://vercel.app)
 2. Select your **autoapply** project
 3. Go to **Settings** → **Environment Variables**
-4. Add:
+4. Add both:
    ```
    Name: GOOGLE_SHEET_ID
-   Value: your_google_sheet_id_here
+   Value: 1kOUBBCA9_vSqohezwUze4uxq0B2PVhJK9czwzjgsOUE
    ```
-5. Click **Save**
+   ```
+   Name: GOOGLE_SERVICE_ACCOUNT_KEY
+   Value: (see Step 3 below for how to get this)
+   ```
+5. Click **Save** after each
 
 ---
 
 ### Step 3: Upload Google Credentials (Optional - for Tracking)
 
-**Note:** Google Sheets tracking on Vercel requires manual credential upload.
+**Good news!** The app now supports environment variable credentials, so tracking works on Vercel.
 
-#### Option A: Use Vercel CLI (Recommended)
+#### Setting up GOOGLE_SERVICE_ACCOUNT_KEY on Vercel:
 
-```bash
-# Install Vercel CLI
-npm install -g vercel
+1. **Copy your credentials file content:**
 
-# Login
-vercel login
+   **Windows PowerShell:**
+   ```powershell
+   cd c:\Users\RAVINDU\Desktop\autoapply\backend
+   Get-Content google-credentials.json -Raw | Set-Clipboard
+   ```
+   
+   **Or manually:** Open `backend/google-credentials.json` and copy the entire content
 
-# Upload credentials as environment variable
-vercel env add GOOGLE_SERVICE_ACCOUNT_KEY
-# Paste the entire contents of google-credentials.json when prompted
-```
+2. **Add to Vercel Dashboard:**
+   - Go to [Vercel Dashboard](https://vercel.app) → Your Project
+   - Navigate to **Settings** → **Environment Variables**
+   - Click **Add New**
+   - Name: `GOOGLE_SERVICE_ACCOUNT_KEY`
+   - Value: Paste the entire JSON content (should look like `{"type":"service_account",...}`)
+   - Select **Production, Preview, Development**
+   - Click **Save**
 
-Then update `backend/sheetsService.js` to read from env variable instead of file.
+3. **Redeploy** (if auto-deploy didn't trigger):
+   ```bash
+   vercel --prod
+   ```
 
-#### Option B: Skip Tracking on Hosted Version
+**Important:**
+- Must be valid JSON (the entire file contents)
+- Include all `\n` characters in the private_key field
+- Don't add extra quotes or modify formatting
 
-If you only want tracking on localhost (simpler):
-- Skip this step
-- Tracking will work on `localhost:5000` only
-- Hosted version will just hide the "Add to Tracker" button
+**Verification:**
+- The app will automatically detect credentials from the environment variable on Vercel
+- Tracks to the same Google Sheet as your local version
 
 ---
 

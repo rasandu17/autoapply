@@ -8,15 +8,30 @@ let sheetsClient = null;
 
 function initializeSheetsClient() {
   try {
-    // Check if credentials file exists
-    const credentialsPath = path.join(__dirname, 'google-credentials.json');
-    
-    if (!fs.existsSync(credentialsPath)) {
-      console.warn('⚠️  Google Sheets: No credentials file found. Tracking feature disabled.');
-      return null;
-    }
+    let credentials;
 
-    const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+    // Option 1: Check for environment variable (Vercel deployment)
+    if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+      try {
+        credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+        console.log('✅ Using Google credentials from environment variable');
+      } catch (parseError) {
+        console.error('❌ Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY:', parseError.message);
+        return null;
+      }
+    } 
+    // Option 2: Check for credentials file (Local development)
+    else {
+      const credentialsPath = path.join(__dirname, 'google-credentials.json');
+      
+      if (!fs.existsSync(credentialsPath)) {
+        console.warn('⚠️  Google Sheets: No credentials file or env variable found. Tracking feature disabled.');
+        return null;
+      }
+
+      credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+      console.log('✅ Using Google credentials from file');
+    }
     
     const auth = new google.auth.GoogleAuth({
       credentials,
@@ -241,7 +256,11 @@ function extractCompanyName(email, jobTitle = '') {
  */
 function isConfigured() {
   const credentialsPath = path.join(__dirname, 'google-credentials.json');
-  return fs.existsSync(credentialsPath) && !!process.env.GOOGLE_SHEET_ID;
+  const hasFile = fs.existsSync(credentialsPath);
+  const hasEnvVar = !!process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+  const hasSheetId = !!process.env.GOOGLE_SHEET_ID;
+  
+  return (hasFile || hasEnvVar) && hasSheetId;
 }
 
 /**
