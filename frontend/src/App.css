@@ -80,7 +80,7 @@
 
 @media (max-width: 768px) {
   .chat-feed {
-    padding: 16px 8px 160px;
+    padding: 16px 8px 120px;
   }
 }
 
@@ -111,8 +111,9 @@
 
 @media (max-width: 768px) {
   .welcome-screen {
+    padding-bottom: 120px;
+    padding-top: 20px;
     justify-content: center;
-    padding: 20px;
   }
 
   .welcome-screen h1 {
@@ -337,9 +338,12 @@
     width: 95%;
   }
   
-  /* Position input at bottom on welcome screen too */
+  /* Position input in middle area on welcome screen */
   .input-area--empty {
-    bottom: 20px;
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 40px;
   }
 }
 
