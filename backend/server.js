@@ -189,6 +189,40 @@ app.post('/api/generate-email', async (req, res) => {
   }
 });
 
+// Generate cover letter endpoint
+app.post('/api/generate-cover-letter', upload.single('image'), async (req, res) => {
+  try {
+    let jobText = req.body.jobText || '';
+    const image = req.file;
+
+    // Step 1: If image provided, extract text using OCR
+    if (image && !jobText) {
+      console.log('📸 Extracting text from image using OCR...');
+      jobText = await ocrService.extractTextFromImage(image.buffer);
+    }
+
+    if (!jobText) {
+      return res.status(400).json({ error: 'Please provide a job description or upload an image' });
+    }
+
+    console.log('🤖 Generating cover letter...');
+    const coverLetter = await geminiService.generateCoverLetter(jobText);
+    console.log('✅ Cover letter generated');
+
+    res.json({ 
+      coverLetter,
+      success: true 
+    });
+
+  } catch (error) {
+    console.error('Error generating cover letter:', error.message);
+    res.status(500).json({ 
+      error: 'Failed to generate cover letter', 
+      details: error.message 
+    });
+  }
+});
+
 // Send email endpoint
 app.post('/api/send-email', async (req, res) => {
   try {

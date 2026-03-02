@@ -7,7 +7,9 @@ import {
   AlertCircle,
   Mail,
   Loader2,
-  Sheet
+  Sheet,
+  FileText,
+  Briefcase
 } from 'lucide-react';
 import './App.css';
 
@@ -178,6 +180,56 @@ const UserMessage = ({ content, image }) => (
     </div>
   </div>
 );
+
+const CoverLetterMessage = ({ coverLetter, loading, error }) => {
+  const [editedLetter, setEditedLetter] = useState(coverLetter || '');
+
+  useEffect(() => {
+    if (coverLetter) {
+      setEditedLetter(coverLetter);
+    }
+  }, [coverLetter]);
+
+  return (
+    <div className="message message--ai">
+      <div className="message-content">
+        {loading ? (
+          <div className="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        ) : error ? (
+          <div className="error-box">
+            <AlertCircle size={18} /> {error}
+          </div>
+        ) : coverLetter ? (
+          <div className="cover-letter-result">
+            <h4 style={{marginBottom: '16px', color: 'var(--text-primary)'}}>
+              <FileText size={20} style={{display: 'inline', verticalAlign: 'middle', marginRight: '8px'}} />
+              Generated Cover Letter <span className="edit-hint">✏️ Editable</span>
+            </h4>
+            <textarea 
+              className="email-body editable-email"
+              value={editedLetter}
+              onChange={(e) => setEditedLetter(e.target.value)}
+              rows={14}
+            />
+            <div style={{marginTop: '16px', textAlign: 'center'}}>
+              <button 
+                className="copy-btn"
+                onClick={() => {
+                  navigator.clipboard.writeText(editedLetter);
+                  alert('✅ Cover letter copied to clipboard!');
+                }}
+              >
+                📋 Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+};
 
 const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelectPosition, analyzingPosition, onStartNew, onAddToTracker, addingToTracker }) => {
   const [editedEmail, setEditedEmail] = useState(result?.email || '');
@@ -410,6 +462,7 @@ const AIMessage = ({ result, loading, error, onSendEmail, sendingEmail, onSelect
 
 /*  Main App Component  */
 function App() {
+  const [mode, setMode] = useState('analysis'); // 'analysis' or 'coverLetter'
   const [inputObj, setInputObj] = useState({ text: '', file: null });
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -427,6 +480,11 @@ function App() {
     setSendingEmail(false);
     setAnalyzingPosition(false);
     setAddingToTracker(false);
+  };
+
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    handleStartNew();
   };
 
   const handleAddToTracker = async (applicationData) => {
@@ -484,21 +542,42 @@ function App() {
     setInputObj({ text: '', file: null });
 
     try {
-      const formData = new FormData();
-      if (currentFile) formData.append('image', currentFile);
-      else             formData.append('jobText', currentText);
+      if (mode === 'coverLetter') {
+        // Cover Letter Generation Mode
+        const formData = new FormData();
+        if (currentFile) formData.append('image', currentFile);
+        else             formData.append('jobText', currentText);
 
-      const res = await fetch(`${API_URL}/analyze`, { method: 'POST', body: formData });
-      
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || 'Failed to analyze job');
+        const res = await fetch(`${API_URL}/generate-cover-letter`, { method: 'POST', body: formData });
+        
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Failed to generate cover letter');
+        }
+        
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        setChatHistory(prev => [...prev, { role: 'ai', coverLetter: data.coverLetter }]);
+
+      } else {
+        // Job Analysis Mode (existing flow)
+        const formData = new FormData();
+        if (currentFile) formData.append('image', currentFile);
+        else             formData.append('jobText', currentText);
+
+        const res = await fetch(`${API_URL}/analyze`, { method: 'POST', body: formData });
+        
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Failed to analyze job');
+        }
+        
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        setChatHistory(prev => [...prev, { role: 'ai', result: data }]);
       }
-      
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-
-      setChatHistory(prev => [...prev, { role: 'ai', result: data }]);
 
     } catch (err) {
       setChatHistory(prev => [...prev, { role: 'ai', error: err.message }]);
@@ -589,7 +668,7 @@ function App() {
         
         {/* Header - Simple Brand */}
         <div className="app-header">
-           <span className="logo-text">AutoApply</span>
+           <span className="logo-text" onClick={handleStartNew} style={{cursor: 'pointer'}}>AutoApply</span>
         </div>
 
         {/* Scrollable Feed */}
@@ -608,37 +687,62 @@ function App() {
                   </div>
                </div>
                <h1>Hello, Ravindu</h1>
-               <p className="subtitle">Upload a job posting to get started</p>
+               <p className="subtitle">
+                 {mode === 'analysis' ? 'Upload a job posting to get started' : 'Upload a job posting to generate cover letter'}
+               </p>
+               
+               {/* Mode Selector */}
+               <div className="mode-selector">
+                 <button 
+                   className={`mode-btn ${mode === 'analysis' ? 'mode-btn--active' : ''}`}
+                   onClick={() => handleModeChange('analysis')}
+                 >
+                   <Briefcase size={18} />
+                   Job Analysis
+                 </button>
+                 <button 
+                   className={`mode-btn ${mode === 'coverLetter' ? 'mode-btn--active' : ''}`}
+                   onClick={() => handleModeChange('coverLetter')}
+                 >
+                   <FileText size={18} />
+                   Cover Letter
+                 </button>
+               </div>
             </div>
           ) : (
             <div className="message-list">
-               {chatHistory.map((msg, i) => (
-                 msg.role === 'user' 
-                   ? <UserMessage key={i} content={msg.content} image={msg.image} />
-                   : <AIMessage 
-                       key={i} 
-                       result={msg.result} 
-                       error={msg.error}
-                       onSendEmail={handleSendEmail}
-                       sendingEmail={sendingEmail}
-                       onSelectPosition={handleSelectPosition}
-                       analyzingPosition={analyzingPosition}
-                       onStartNew={handleStartNew}
-                       onAddToTracker={handleAddToTracker}
-                       addingToTracker={addingToTracker}
-                     />
-               ))}
-               {loading && <AIMessage loading={true} />}
+               {chatHistory.map((msg, i) => {
+                 if (msg.role === 'user') {
+                   return <UserMessage key={i} content={msg.content} image={msg.image} />;
+                 } else if (msg.coverLetter || msg.error) {
+                   return <CoverLetterMessage key={i} coverLetter={msg.coverLetter} error={msg.error} />;
+                 } else {
+                   return <AIMessage 
+                     key={i} 
+                     result={msg.result} 
+                     error={msg.error}
+                     onSendEmail={handleSendEmail}
+                     sendingEmail={sendingEmail}
+                     onSelectPosition={handleSelectPosition}
+                     analyzingPosition={analyzingPosition}
+                     onStartNew={handleStartNew}
+                     onAddToTracker={handleAddToTracker}
+                     addingToTracker={addingToTracker}
+                   />;
+                 }
+               })}
+               {loading && mode === 'coverLetter' && <CoverLetterMessage loading={true} />}
+               {loading && mode === 'analysis' && <AIMessage loading={true} />}
             </div>
           )}
         </div>
 
-        {/* Input Area (Fixed Bottom) - Hide when email is generated */}
+        {/* Input Area (Fixed Bottom) - Hide after sending message */}
         {(() => {
-          const lastAIMessage = chatHistory.filter(msg => msg.role === 'ai').pop();
-          const hasEmailGenerated = lastAIMessage?.result?.email && !lastAIMessage?.result?.needsSelection;
+          // Hide input after any message is sent
+          const hasMessages = chatHistory.length > 0 || loading;
           
-          return !hasEmailGenerated ? (
+          return !hasMessages ? (
             <div className={`input-area ${chatHistory.length === 0 ? 'input-area--empty' : ''}`}>
               <div className="input-container">
                 <button className="icon-btn" onClick={() => fileInputRef.current?.click()}>

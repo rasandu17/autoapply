@@ -495,6 +495,73 @@ Keep it short and impactful. Return ONLY the email body text.
   }
 }
 
+/**
+ * Generate a short cover letter
+ * Returns a concise, professional cover letter (3-4 paragraphs max)
+ */
+async function generateCoverLetter(jobText) {
+  try {
+    const cv = await loadCV();
+
+    const messages = [{
+      role: 'user',
+      content: `Generate a short, professional cover letter for the job posting below based on this CV. 
+
+CV:
+${cv}
+
+JOB POSTING:
+${jobText}
+
+REQUIREMENTS:
+- SHORT and CONCISE (3-4 paragraphs maximum)
+- Start with "Dear Hiring Manager," followed by a blank line
+- First paragraph: Brief introduction and the position you're applying for
+- Second paragraph: 2-3 key qualifications that match the job (be specific from CV)
+- Third paragraph: Why you're interested in this role/company (1-2 sentences)
+- Fourth paragraph: Closing statement with call to action
+- Professional but personable tone
+- NO buzzwords like "passionate", "enthusiastic", "leverage", "synergy"
+- DO NOT include contact details, signature, or date at the end
+- Return ONLY the cover letter body text
+
+Keep it short, genuine, and focused on the most relevant qualifications.
+`
+    }];
+
+    let coverLetter = await callGroq(messages);
+    
+    // Add static contact information signature at the end
+    const signature = `\n\nSincerely,\n\nRavindu Sandumith\n0776082132\nravindus.me\nravindusandumith171@gmail.com`;
+    
+    // Remove any existing signature-like content
+    const lines = coverLetter.split('\n');
+    const filteredLines = [];
+    let skipRest = false;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.includes('Sincerely') || line.includes('Best regards') || 
+          line.includes('Thank you for considering') || line.includes('Ravindu') ||
+          line.match(/^\d{10}$/) || line.includes('ravindus')) {
+        skipRest = true;
+      }
+      if (!skipRest) {
+        filteredLines.push(lines[i]);
+      }
+    }
+    
+    coverLetter = filteredLines.join('\n').trim() + signature;
+    
+    console.log('✅ Cover letter generated');
+    return coverLetter;
+    
+  } catch (error) {
+    console.error('Cover letter generation error:', error.message);
+    throw new Error('Failed to generate cover letter');
+  }
+}
+
 module.exports = {
   analyzeJobVsCV,
   generateEmail,
@@ -502,5 +569,6 @@ module.exports = {
   extractJobTitle,
   detectMultiplePositions,
   analyzeMultiplePositions,
-  generateEmailForPosition
+  generateEmailForPosition,
+  generateCoverLetter
 };

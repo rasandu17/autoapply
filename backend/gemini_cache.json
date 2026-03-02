@@ -273,5 +273,23 @@
       "title": "Intern HR & Administration Executive",
       "description": "Assist in recruitment, onboarding, and internal coordination processes"
     }
-  ]
+  ],
+  "positions_33faac4dc18d227194b8adf4d3d73719": null,
+  "analysis_33faac4dc18d227194b8adf4d3d73719": {
+    "compatibility": 85,
+    "matchingSkills": [
+      "React",
+      "Node.js",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Git"
+    ],
+    "missingSkills": [
+      "PostgreSQL"
+    ],
+    "eligibility": "Eligible"
+  },
+  "email_33faac4dc18d227194b8adf4d3d73719": "rasandu17@gmail.com",
+  "title_33faac4dc18d227194b8adf4d3d73719": "Full Stack Developer Intern"
 }
