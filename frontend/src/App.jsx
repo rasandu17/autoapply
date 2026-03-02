@@ -688,7 +688,7 @@ function App() {
                </div>
                <h1>Hello, Ravindu</h1>
                <p className="subtitle">
-                 {mode === 'analysis' ? 'Upload a job posting to get started' : 'Upload a job posting to generate cover letter'}
+                 {mode === 'analysis' ? 'Generate Email & Track' : 'Generate Cover Letter'}
                </p>
                
                {/* Mode Selector */}
