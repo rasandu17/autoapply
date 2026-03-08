@@ -98,8 +98,9 @@ export default async function handler(req, res) {
         jobText = await ocrService.extractTextFromImage(imageBuffer);
         console.log('✅ OCR complete, extracted text length:', jobText.length);
       } catch (ocrError) {
-        console.error('❌ OCR error:', ocrError);
-        throw new Error(`OCR failed: ${ocrError.message}`);
+        console.error('❌ OCR error:', ocrError.message);
+        // Pass through the user-friendly error message from ocrService
+        throw ocrError;
       }
     }
 

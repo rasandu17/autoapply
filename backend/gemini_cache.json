@@ -291,5 +291,23 @@
     "eligibility": "Eligible"
   },
   "email_33faac4dc18d227194b8adf4d3d73719": "rasandu17@gmail.com",
-  "title_33faac4dc18d227194b8adf4d3d73719": "Full Stack Developer Intern"
+  "title_33faac4dc18d227194b8adf4d3d73719": "Full Stack Developer Intern",
+  "positions_4c036a01ba1b5f021f9aa30a510b7da1": null,
+  "analysis_4c036a01ba1b5f021f9aa30a510b7da1": {
+    "compatibility": 85,
+    "matchingSkills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Git"
+    ],
+    "missingSkills": [
+      "PostgreSQL"
+    ],
+    "eligibility": "Eligible"
+  },
+  "email_4c036a01ba1b5f021f9aa30a510b7da1": "rasandu17@gmail.com",
+  "title_4c036a01ba1b5f021f9aa30a510b7da1": "Full Stack Developer Intern"
 }

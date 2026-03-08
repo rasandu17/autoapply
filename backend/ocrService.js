@@ -53,7 +53,19 @@ Do not add any commentary or explanation.`;
   } catch (error) {
     console.error('❌ Vision Error:', error.message);
     console.error('Full error:', error);
-    throw new Error('Failed to extract text from image. Please try typing the job description instead.');
+    
+    // Provide user-friendly error messages based on error type
+    const errorMsg = error.message || '';
+    
+    if (errorMsg.includes('API key') || errorMsg.includes('invalid') || errorMsg.includes('expired')) {
+      throw new Error('⚠️ Gemini API key is expired or invalid. Please type the job description instead.');
+    } else if (errorMsg.includes('quota') || errorMsg.includes('limit')) {
+      throw new Error('⚠️ OCR service limit reached. Please type the job description instead.');
+    } else if (errorMsg.includes('401') || errorMsg.includes('403')) {
+      throw new Error('⚠️ Gemini API key authentication failed. Please type the job description instead.');
+    } else {
+      throw new Error('⚠️ OCR is not available. Please type the job description instead.');
+    }
   }
 }
 
