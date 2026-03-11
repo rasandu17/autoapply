@@ -5,8 +5,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment variables
-.env
-.env.local
 
 # Google Service Account Credentials (sensitive)
 backend/google-credentials.json
@@ -40,3 +38,4 @@ logs/
 # Temp files
 *.tmp
 .cache/
+config.bat
